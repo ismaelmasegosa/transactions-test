@@ -1,5 +1,6 @@
 package com.ismaelmasegosa.transaction.challenge.acceptance.steps;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -11,11 +12,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ismaelmasegosa.transaction.challenge.acceptance.config.AcceptanceConfiguration;
 import com.ismaelmasegosa.transaction.challenge.acceptance.config.World;
 import com.ismaelmasegosa.transaction.challenge.infrastructure.rest.dto.TransactionDto;
+import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -32,6 +35,11 @@ public class CreateTransaction extends AcceptanceConfiguration {
 
   @Autowired
   private ObjectMapper objectMapper;
+
+  @Before
+  public void setUp() throws Exception {
+    world.reset();
+  }
 
   @Given("reference {string}, account_iban {string}, date {string}, amount {double}, fee {double} and description {string} are provided")
   public void referenceAccountIbanDateAmountFeeAndDescriptionAreProvided(String reference, String accountIban, String date, double amount,
@@ -65,6 +73,23 @@ public class CreateTransaction extends AcceptanceConfiguration {
     resultActions.andExpect(jsonPath("$.amount", is(world.getAmount())));
     resultActions.andExpect(jsonPath("$.fee", is(world.getFee())));
     resultActions.andExpect(jsonPath("$.description", is(world.getDescription())));
+  }
+
+  @Given("reference {string}, date {string}, fee {double} and description {string} are provided")
+  public void referenceDateFeeAndDescriptionAreProvided(String reference, String date, double fee, String description) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+    world.setReference(reference);
+    world.setDate(LocalDateTime.parse(date, formatter));
+    world.setFee(fee);
+    world.setDescription(description);
+  }
+
+  @Then("the validation error should be returned")
+  public void theValidationErrorShouldBeReturned() throws Exception {
+    List<String> errors = asList("Account IBAN can not be empty", "Amount can not be zero");
+    ResultActions resultActions = world.getResultActions();
+    resultActions.andExpect(status().isBadRequest());
+    resultActions.andExpect(jsonPath("$.errors", is(errors)));
   }
 
   private String toJson(TransactionDto transactionDto) throws JsonProcessingException {
