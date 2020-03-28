@@ -23,6 +23,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<cucumber.version>4.2.6</cucumber.version>
 	</properties>
 
 </project>
