@@ -5,6 +5,8 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.ismaelmasegosa.transaction.challenge.TransactionChallengeApplication;
+import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.TransactionRepository;
+import com.ismaelmasegosa.transaction.challenge.it.stubs.InMemoryTransactionRepositoryStub;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootContextLoader;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +30,11 @@ public class AcceptanceConfiguration {
 
     @Autowired
     private WebApplicationContext context;
+
+    @Bean
+    public TransactionRepository transactionRepository() throws Exception {
+      return new InMemoryTransactionRepositoryStub();
+    }
 
     @Bean
     public World world() {

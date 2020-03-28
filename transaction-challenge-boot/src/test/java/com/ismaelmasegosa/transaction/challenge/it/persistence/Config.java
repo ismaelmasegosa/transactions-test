@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 public class Config {
 
   @Bean
+  @ConditionalOnMissingBean(name = "transactionRepository")
   public TransactionRepository transactionRepository() throws Exception {
     return new InMemoryTransactionRepositoryStub();
   }
