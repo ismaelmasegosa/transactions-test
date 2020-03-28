@@ -3,6 +3,8 @@ package com.ismaelmasegosa.transaction.challenge.acceptance.config;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.ismaelmasegosa.transaction.challenge.TransactionChallengeApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootContextLoader;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
 @WebAppConfiguration
-@ContextConfiguration(loader = SpringBootContextLoader.class)
+@ContextConfiguration(classes = TransactionChallengeApplication.class, loader = SpringBootContextLoader.class)
 @Import(value = {AcceptanceConfiguration.CucumberConfiguration.class})
 @Profile("acceptance")
 public class AcceptanceConfiguration {
@@ -39,7 +41,9 @@ public class AcceptanceConfiguration {
 
     @Bean
     public ObjectMapper objectMapper() {
-      return new ObjectMapper();
+      ObjectMapper objectMapper = new ObjectMapper();
+      objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+      return objectMapper;
     }
   }
 }
