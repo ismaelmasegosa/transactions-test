@@ -30,7 +30,7 @@ public class CreateTransactionIT {
   private UseCase<CreateTransactionParams, Either<Error, Transaction>> createTransaction;
 
   @Test
-  public void given_Account_IBAN_When_Find_Account_By_IBAN_Then_The_Account_Should_Be_Returned() {
+  public void given_Transaction_When_Save_Transaction_Is_Executed_Then_The_Transaction_Should_Be_Saved() {
     // given
     long date = System.currentTimeMillis();
     String reference = "12345A";
