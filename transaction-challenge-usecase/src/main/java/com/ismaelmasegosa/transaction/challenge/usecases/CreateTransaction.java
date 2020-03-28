@@ -1,9 +1,12 @@
 package com.ismaelmasegosa.transaction.challenge.usecases;
 
+import static com.ismaelmasegosa.transaction.challenge.domain.core.Either.left;
 import static com.ismaelmasegosa.transaction.challenge.domain.core.Either.right;
 
 import com.ismaelmasegosa.transaction.challenge.domain.core.Either;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Error;
+import com.ismaelmasegosa.transaction.challenge.domain.core.Validation;
+import com.ismaelmasegosa.transaction.challenge.domain.core.error.BadRequestError;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.TransactionCollection;
 import com.ismaelmasegosa.transaction.challenge.usecases.core.UseCase;
@@ -20,8 +23,14 @@ public class CreateTransaction implements UseCase<CreateTransactionParams, Eithe
 
   @Override
   public Either<Error, Transaction> execute(CreateTransactionParams params) {
-    Transaction transactionSaved = accountCollection.addTransaction(mapAsDomainTransaction().apply(params));
-    return right(transactionSaved);
+    final Validation validationError = params.validate();
+    if (validationError.hasErrors()) {
+      BadRequestError badRequestError = new BadRequestError(validationError.getErrors());
+      return left(badRequestError);
+    } else {
+      Transaction transactionSaved = accountCollection.addTransaction(mapAsDomainTransaction().apply(params));
+      return right(transactionSaved);
+    }
   }
 
   private Function<CreateTransactionParams, Transaction> mapAsDomainTransaction() {
