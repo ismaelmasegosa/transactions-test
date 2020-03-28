@@ -11,7 +11,7 @@ public class TransactionDtoToCreateTransactionParams implements Function<Transac
 
   @Override
   public CreateTransactionParams apply(TransactionDto dto) {
-    return new CreateTransactionParams(dto.getReference(), dto.getAccountIban(), dto.getDate().toInstant(ZoneOffset.UTC).toEpochMilli(),
-        dto.getAmount(), dto.getFee(), dto.getDescription());
+    long date = dto.getDate() != null ? dto.getDate().toInstant(ZoneOffset.UTC).toEpochMilli() : System.currentTimeMillis();
+    return new CreateTransactionParams(dto.getReference(), dto.getAccountIban(), date, dto.getAmount(), dto.getFee(), dto.getDescription());
   }
 }

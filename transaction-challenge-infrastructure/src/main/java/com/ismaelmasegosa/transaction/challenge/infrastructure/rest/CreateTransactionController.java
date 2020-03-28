@@ -32,11 +32,22 @@ public class CreateTransactionController {
 
   @PostMapping("/transaction")
   public ResponseEntity<?> createTransaction(@RequestBody TransactionDto transactionDto) {
-    Either<Error, Transaction> response = createTransaction.execute(dtoToParams.apply(transactionDto));
-    return created(transactionToResponse.apply(response.get()));
+    return createTransaction.execute(toParams(transactionDto)).fold(ErrorHandler::returnResponseEntity, createdResponse());
   }
 
-  private ResponseEntity<TransactionResponse> created(TransactionResponse transactionResponse) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(transactionResponse);
+  private Function<Transaction, ResponseEntity<TransactionResponse>> createdResponse() {
+    return this::toResponseEntity;
+  }
+
+  private ResponseEntity<TransactionResponse> toResponseEntity(Transaction transaction) {
+    return ResponseEntity.status(HttpStatus.CREATED).body(toResponse(transaction));
+  }
+
+  private TransactionResponse toResponse(Transaction transaction) {
+    return transactionToResponse.apply(transaction);
+  }
+
+  private CreateTransactionParams toParams(TransactionDto transactionDto) {
+    return dtoToParams.apply(transactionDto);
   }
 }
