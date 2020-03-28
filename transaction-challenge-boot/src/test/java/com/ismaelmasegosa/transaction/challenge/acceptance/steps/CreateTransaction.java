@@ -1,14 +1,16 @@
 package com.ismaelmasegosa.transaction.challenge.acceptance.steps;
 
+import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ismaelmasegosa.transaction.challenge.acceptance.config.AcceptanceConfiguration;
 import com.ismaelmasegosa.transaction.challenge.acceptance.config.World;
-import com.ismaelmasegosa.transaction.challenge.dto.TransactionDto;
+import com.ismaelmasegosa.transaction.challenge.infrastructure.rest.dto.TransactionDto;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -18,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @ActiveProfiles(profiles = {"test", "acceptance"})
 public class CreateTransaction extends AcceptanceConfiguration {
@@ -49,7 +50,7 @@ public class CreateTransaction extends AcceptanceConfiguration {
     TransactionDto transaction =
         new TransactionDto(world.getReference(), world.getAccountIban(), world.getDate(), world.getAmount(), world.getFee(),
             world.getDescription());
-    ResultActions resultActions = mockMvc.perform(post("/api/v1/transaction").contentType(APPLICATION_JSON).content(toJson(transaction)));
+    ResultActions resultActions = mockMvc.perform(post("/transaction").contentType(APPLICATION_JSON).content(toJson(transaction)));
 
     world.setResultActions(resultActions);
   }
@@ -57,13 +58,13 @@ public class CreateTransaction extends AcceptanceConfiguration {
   @Then("the transaction is saved and returned")
   public void then() throws Exception {
     ResultActions resultActions = world.getResultActions();
-    resultActions.andExpect(MockMvcResultMatchers.status().isCreated());
-    resultActions.andExpect(jsonPath("$.reference").value(world.getReference()));
-    resultActions.andExpect(jsonPath("$.account_iban").value(world.getAccountIban()));
-    resultActions.andExpect(jsonPath("$.date").value(world.getDate()));
-    resultActions.andExpect(jsonPath("$.amount").value(world.getReference()));
-    resultActions.andExpect(jsonPath("$.fee").value(world.getReference()));
-    resultActions.andExpect(jsonPath("$.description").value(world.getDescription()));
+    resultActions.andExpect(status().isCreated());
+    resultActions.andExpect(jsonPath("$.reference", is(world.getReference())));
+    resultActions.andExpect(jsonPath("$.account_iban", is(world.getAccountIban())));
+    resultActions.andExpect(jsonPath("$.date", is(world.getDate().toString())));
+    resultActions.andExpect(jsonPath("$.amount", is(world.getAmount())));
+    resultActions.andExpect(jsonPath("$.fee", is(world.getFee())));
+    resultActions.andExpect(jsonPath("$.description", is(world.getDescription())));
   }
 
   private String toJson(TransactionDto transactionDto) throws JsonProcessingException {
