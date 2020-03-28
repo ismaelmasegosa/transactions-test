@@ -4,3 +4,8 @@ Feature: Create a new transaction
     Given reference "12345A", account_iban "ES9820385778983000760236", date "2019-07-16T16:55:42.000Z", amount 193.38, fee 3.18 and description "Restaurant payment" are provided
     When a request of create a transaction is received
     Then the transaction is saved and returned
+
+  Scenario: Create a new transaction without mandatory fields
+    Given reference "12345A", date "2019-07-16T16:55:42.000Z", fee 3.18 and description "Restaurant payment" are provided
+    When a request of create a transaction is received
+    Then the validation error should be returned
