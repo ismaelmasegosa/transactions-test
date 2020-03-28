@@ -19,6 +19,16 @@ public class World {
 
   private ResultActions resultActions;
 
+  public void reset() {
+    this.reference = "";
+    this.accountIban = "";
+    this.date = null;
+    this.amount = 0.0;
+    this.fee = 0.0;
+    this.description = "";
+    this.resultActions = null;
+  }
+
   public String getReference() {
     return reference;
   }
