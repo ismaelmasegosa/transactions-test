@@ -20,6 +20,7 @@ import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.TransactionCollection;
 import com.ismaelmasegosa.transaction.challenge.usecases.params.CreateTransactionParams;
 import java.util.List;
+import org.junit.Before;
 import org.junit.Test;
 
 public class CreateTransactionTest {
@@ -31,6 +32,11 @@ public class CreateTransactionTest {
   AccountBalanceProvider accountBalanceProvider = mock(AccountBalanceProvider.class);
 
   CreateTransaction createTransaction = new CreateTransaction(eventPublisher, accountBalanceProvider, transactionCollection);
+
+  @Before
+  public void setUp() {
+    given(accountBalanceProvider.getAccountBalance(anyString())).willReturn(678.89);
+  }
 
   @Test
   public void given_A_Transaction_When_The_Create_Transaction_Use_Case_Is_Executed_Then_The_Created_Transacton_Should_Be_Returned() {
@@ -44,7 +50,6 @@ public class CreateTransactionTest {
     CreateTransactionParams params = new CreateTransactionParams(reference, accountIban, date, amount, fee, description);
     Transaction transaction = new Transaction(reference, accountIban, date, amount, fee, description);
     given(transactionCollection.addTransaction(any(Transaction.class))).willReturn(transaction);
-    given(accountBalanceProvider.getAccountBalance(anyString())).willReturn(678.89);
 
     // when
     Either<Error, Transaction> response = createTransaction.execute(params);
@@ -74,7 +79,6 @@ public class CreateTransactionTest {
     CreateTransactionParams params = new CreateTransactionParams(reference, accountIban, date, amount, fee, description);
     Transaction transaction = new Transaction(reference, accountIban, date, amount, fee, description);
     given(transactionCollection.addTransaction(any(Transaction.class))).willReturn(transaction);
-    given(accountBalanceProvider.getAccountBalance(anyString())).willReturn(678.89);
 
     // when
     Either<Error, Transaction> response = createTransaction.execute(params);
@@ -99,7 +103,6 @@ public class CreateTransactionTest {
     CreateTransactionParams params = new CreateTransactionParams(reference, accountIban, date, amount, fee, description);
     Transaction transaction = new Transaction(reference, accountIban, date, amount, fee, description);
     given(transactionCollection.addTransaction(any(Transaction.class))).willReturn(transaction);
-    given(accountBalanceProvider.getAccountBalance(anyString())).willReturn(678.89);
 
     // when
     Either<Error, Transaction> response = createTransaction.execute(params);

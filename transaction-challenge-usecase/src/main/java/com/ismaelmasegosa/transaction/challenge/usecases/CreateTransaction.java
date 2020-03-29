@@ -10,14 +10,19 @@ import com.ismaelmasegosa.transaction.challenge.domain.core.Either;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Error;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Validation;
 import com.ismaelmasegosa.transaction.challenge.domain.core.error.BadRequestError;
+import com.ismaelmasegosa.transaction.challenge.domain.events.DomainEvent;
 import com.ismaelmasegosa.transaction.challenge.domain.events.DomainEventPublisher;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.TransactionCollection;
 import com.ismaelmasegosa.transaction.challenge.usecases.core.UseCase;
 import com.ismaelmasegosa.transaction.challenge.usecases.params.CreateTransactionParams;
+import java.util.List;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 public class CreateTransaction implements UseCase<CreateTransactionParams, Either<Error, Transaction>> {
+
+  private static final String HAS_NOT_AVAILABLE_BALANCE = "Transaction not created, the total account balance can not be bellow zero";
 
   private final DomainEventPublisher eventPublisher;
 
@@ -36,35 +41,49 @@ public class CreateTransaction implements UseCase<CreateTransactionParams, Eithe
   public Either<Error, Transaction> execute(CreateTransactionParams params) {
     final Validation validationError = params.validate();
     if (validationError.hasErrors()) {
-      BadRequestError badRequestError = new BadRequestError(validationError.getErrors());
-      return left(badRequestError);
+      return left(createBadRequestResponse(validationError.getErrors()));
     } else {
-      double accountBalance = accountBalanceProvider.getAccountBalance(params.getAccountIban());
-      double totalAmount = params.getAmount() - params.getFee();
-      double finalAccountBalance = accountBalance + totalAmount;
-      if (finalAccountBalance < 0) {
-        return left(new BadRequestError(singletonList("Transaction not created, the total account balance can not be bellow zero")));
+      if (hasAvailableAccountBalance(params)) {
+        return right(mapAsDomainTransaction().andThen(addTransaction()).andThen(publishEvent()).apply(params));
+      } else {
+        return left(createBadRequestResponse(singletonList(HAS_NOT_AVAILABLE_BALANCE)));
       }
-      Transaction transactionSaved = mapAsDomainTransaction().andThen(addTransaction()).apply(params);
-      eventPublisher.publish(mapToDomainEvent(params, totalAmount));
-      return right(transactionSaved);
     }
   }
 
-  private UpdateAccountBalanceEvent mapToDomainEvent(CreateTransactionParams params, double totalAmount) {
-    return new UpdateAccountBalanceEvent(params.getAccountIban(), totalAmount);
-  }
-
   private Function<CreateTransactionParams, Transaction> mapAsDomainTransaction() {
-    return this::asDomainTransaction;
-  }
-
-  public Transaction asDomainTransaction(CreateTransactionParams params) {
-    return new Transaction(params.getReference(), params.getAccountIban(), params.getDate(), params.getAmount(), params.getFee(),
+    return params -> new Transaction(params.getReference(), params.getAccountIban(), params.getDate(), params.getAmount(), params.getFee(),
         params.getDescription());
   }
 
-  public Function<Transaction, Transaction> addTransaction() {
+  private UnaryOperator<Transaction> addTransaction() {
     return transactionCollection::addTransaction;
+  }
+
+  private UnaryOperator<Transaction> publishEvent() {
+    return transaction -> {
+      eventPublisher.publish(asDomainEvent(transaction));
+      return transaction;
+    };
+  }
+
+  private DomainEvent asDomainEvent(Transaction transaction) {
+    double totalAmount = calculateTotalAmount(transaction.getAmount(), transaction.getFee());
+    return new UpdateAccountBalanceEvent(transaction.getAccountIban(), totalAmount);
+  }
+
+  private boolean hasAvailableAccountBalance(CreateTransactionParams params) {
+    double accountBalance = accountBalanceProvider.getAccountBalance(params.getAccountIban());
+    double totalAmount = calculateTotalAmount(params.getAmount(), params.getFee());
+    double finalAccountBalance = accountBalance + totalAmount;
+    return finalAccountBalance > 0;
+  }
+
+  private BadRequestError createBadRequestResponse(List<String> errors) {
+    return new BadRequestError(errors);
+  }
+
+  private double calculateTotalAmount(double amount, double fee) {
+    return amount - fee;
   }
 }
