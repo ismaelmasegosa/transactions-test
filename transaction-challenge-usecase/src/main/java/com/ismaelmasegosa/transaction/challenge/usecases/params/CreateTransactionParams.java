@@ -1,6 +1,10 @@
 package com.ismaelmasegosa.transaction.challenge.usecases.params;
 
+import static com.ismaelmasegosa.transaction.challenge.usecases.params.CreateTransactionParamsValidation.fullParametersValidations;
+
+import com.ismaelmasegosa.transaction.challenge.domain.core.Validation;
 import com.ismaelmasegosa.transaction.challenge.usecases.core.UseCaseParams;
+import com.ismaelmasegosa.transaction.challenge.usecases.core.validation.ValidationResult;
 import java.util.Objects;
 
 public class CreateTransactionParams implements UseCaseParams {
@@ -72,6 +76,14 @@ public class CreateTransactionParams implements UseCaseParams {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  @Override
+  public Validation validate() {
+    final Validation validation = new Validation();
+    final ValidationResult result = fullParametersValidations().apply(this);
+    result.getReasons().ifPresent(validation::addErrors);
+    return validation;
   }
 
   @Override
