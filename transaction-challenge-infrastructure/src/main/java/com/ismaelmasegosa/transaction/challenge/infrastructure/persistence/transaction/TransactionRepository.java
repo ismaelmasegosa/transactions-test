@@ -8,4 +8,6 @@ public interface TransactionRepository {
   Optional<TransactionEntity> findByReference(String reference);
 
   TransactionEntity save(TransactionEntity transactionEntity);
+
+  void delete(String reference);
 }

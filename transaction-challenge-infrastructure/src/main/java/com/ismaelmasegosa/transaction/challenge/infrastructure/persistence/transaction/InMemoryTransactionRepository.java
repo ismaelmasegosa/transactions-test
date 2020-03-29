@@ -25,4 +25,9 @@ public class InMemoryTransactionRepository implements TransactionRepository {
     transactionRepository.put(transactionEntity.getReference(), transactionEntity);
     return transactionEntity;
   }
+
+  @Override
+  public void delete(String reference) {
+    transactionRepository.remove(reference);
+  }
 }

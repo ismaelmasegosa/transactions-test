@@ -58,5 +58,6 @@ public class CreateTransactionIT {
     assertEquals(date, transactionEntity.getDate());
     assertEquals(description, transactionEntity.getDescription());
     assertEquals(1, eventPublisher.getEvents().size());
+    transactionRepository.delete(reference);
   }
 }
