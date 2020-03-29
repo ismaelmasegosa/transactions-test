@@ -1,0 +1,13 @@
+package com.ismaelmasegosa.transaction.challenge.acceptance;
+
+import cucumber.api.CucumberOptions;
+import cucumber.api.SnippetType;
+import cucumber.api.junit.Cucumber;
+import org.junit.runner.RunWith;
+
+@RunWith(Cucumber.class)
+@CucumberOptions(plugin = {"pretty", "html:target/features"}, glue = {"com.ismaelmasegosa.transaction.challenge.acceptance"},
+    tags = {"not @suggester"}, features = "classpath:features", snippets = SnippetType.CAMELCASE)
+public class CucumberRunnerITCase {
+
+}
