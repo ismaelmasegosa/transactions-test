@@ -1,6 +1,7 @@
 package com.ismaelmasegosa.transaction.challenge.acceptance.steps;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -87,6 +88,14 @@ public class CreateTransaction extends AcceptanceConfiguration {
   @Then("the validation error should be returned")
   public void theValidationErrorShouldBeReturned() throws Exception {
     List<String> errors = asList("Account IBAN can not be empty", "Amount can not be zero");
+    ResultActions resultActions = world.getResultActions();
+    resultActions.andExpect(status().isBadRequest());
+    resultActions.andExpect(jsonPath("$.errors", is(errors)));
+  }
+
+  @Then("an uncreated transaction error should be returned")
+  public void theForbiddenErrorShouldBeReturned() throws Exception {
+    List<String> errors = singletonList("Transaction not created, the total account balance can not be bellow zero");
     ResultActions resultActions = world.getResultActions();
     resultActions.andExpect(status().isBadRequest());
     resultActions.andExpect(jsonPath("$.errors", is(errors)));
