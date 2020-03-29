@@ -2,7 +2,9 @@ package com.ismaelmasegosa.transaction.challenge.usecases;
 
 import static com.ismaelmasegosa.transaction.challenge.domain.core.Either.left;
 import static com.ismaelmasegosa.transaction.challenge.domain.core.Either.right;
+import static java.util.Collections.singletonList;
 
+import com.ismaelmasegosa.transaction.challenge.domain.account.AccountBalanceProvider;
 import com.ismaelmasegosa.transaction.challenge.domain.account.events.UpdateAccountBalanceEvent;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Either;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Error;
@@ -19,10 +21,14 @@ public class CreateTransaction implements UseCase<CreateTransactionParams, Eithe
 
   private final DomainEventPublisher eventPublisher;
 
+  private final AccountBalanceProvider accountBalanceProvider;
+
   private final TransactionCollection transactionCollection;
 
-  public CreateTransaction(DomainEventPublisher eventPublisher, TransactionCollection transactionCollection) {
+  public CreateTransaction(DomainEventPublisher eventPublisher, AccountBalanceProvider accountBalanceProvider,
+      TransactionCollection transactionCollection) {
     this.eventPublisher = eventPublisher;
+    this.accountBalanceProvider = accountBalanceProvider;
     this.transactionCollection = transactionCollection;
   }
 
@@ -33,15 +39,20 @@ public class CreateTransaction implements UseCase<CreateTransactionParams, Eithe
       BadRequestError badRequestError = new BadRequestError(validationError.getErrors());
       return left(badRequestError);
     } else {
-      Transaction transactionSaved = mapAsDomainTransaction().andThen(addTransaction()).apply(params);
+      double accountBalance = accountBalanceProvider.getAccountBalance(params.getAccountIban());
       double totalAmount = params.getAmount() - params.getFee();
+      double finalAccountBalance = accountBalance + totalAmount;
+      if (finalAccountBalance < 0) {
+        return left(new BadRequestError(singletonList("Transaction not created, the total account balance can not be bellow zero")));
+      }
+      Transaction transactionSaved = mapAsDomainTransaction().andThen(addTransaction()).apply(params);
       eventPublisher.publish(mapToDomainEvent(params, totalAmount));
       return right(transactionSaved);
     }
   }
 
   private UpdateAccountBalanceEvent mapToDomainEvent(CreateTransactionParams params, double totalAmount) {
-    return new UpdateAccountBalanceEvent(params.getAccountIban(),totalAmount);
+    return new UpdateAccountBalanceEvent(params.getAccountIban(), totalAmount);
   }
 
   private Function<CreateTransactionParams, Transaction> mapAsDomainTransaction() {

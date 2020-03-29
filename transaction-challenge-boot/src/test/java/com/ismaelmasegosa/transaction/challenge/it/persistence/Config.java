@@ -1,5 +1,7 @@
 package com.ismaelmasegosa.transaction.challenge.it.persistence;
 
+import com.ismaelmasegosa.transaction.challenge.domain.account.AccountBalanceProvider;
+import com.ismaelmasegosa.transaction.challenge.domain.account.AccountBalanceRepository;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Either;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Error;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
@@ -32,7 +34,7 @@ public class Config {
   @Bean
   @ConditionalOnMissingBean(name = "createTransaction")
   public UseCase<CreateTransactionParams, Either<Error, Transaction>> createTransaction(DomainEventPublisherStub eventPublisherStub,
-      TransactionCollection transactionCollection) {
-    return new CreateTransaction(eventPublisherStub, transactionCollection);
+      AccountBalanceProvider accountBalanceProvider, TransactionCollection transactionCollection) {
+    return new CreateTransaction(eventPublisherStub, accountBalanceProvider, transactionCollection);
   }
 }

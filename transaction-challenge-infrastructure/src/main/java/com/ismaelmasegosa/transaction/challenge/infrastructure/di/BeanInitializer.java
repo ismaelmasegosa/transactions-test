@@ -1,5 +1,6 @@
 package com.ismaelmasegosa.transaction.challenge.infrastructure.di;
 
+import com.ismaelmasegosa.transaction.challenge.domain.account.AccountBalanceProvider;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Either;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Error;
 import com.ismaelmasegosa.transaction.challenge.domain.events.DomainEventPublisher;
@@ -18,7 +19,7 @@ public class BeanInitializer {
   @Bean
   @ConditionalOnMissingBean(name = "createTransaction")
   public UseCase<CreateTransactionParams, Either<Error, Transaction>> createTransaction(DomainEventPublisher eventPublisher,
-      TransactionCollection transactionCollection) {
-    return new CreateTransaction(eventPublisher, transactionCollection);
+      AccountBalanceProvider accountBalanceProvider, TransactionCollection transactionCollection) {
+    return new CreateTransaction(eventPublisher, accountBalanceProvider, transactionCollection);
   }
 }

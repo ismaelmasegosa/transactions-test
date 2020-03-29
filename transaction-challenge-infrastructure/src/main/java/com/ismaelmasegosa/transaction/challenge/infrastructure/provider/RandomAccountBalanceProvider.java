@@ -14,6 +14,11 @@ public class RandomAccountBalanceProvider implements AccountBalanceProvider {
   }
 
   @Override
+  public double getAccountBalance(String accountIban) {
+    return accountBalanceRepository.getAccountBalance(accountIban);
+  }
+
+  @Override
   public double updateAccountBalance(String accountIban, double amount) {
     return accountBalanceRepository.updateAccountBalance(accountIban, amount);
   }
