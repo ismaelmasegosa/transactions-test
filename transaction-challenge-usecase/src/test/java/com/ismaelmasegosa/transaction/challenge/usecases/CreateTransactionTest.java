@@ -28,9 +28,9 @@ public class CreateTransactionTest {
     double amount = 193.38;
     double fee = 3.18;
     String description = "Restaurant payment";
+    CreateTransactionParams params = new CreateTransactionParams(reference, accountIban, date, amount, fee, description);
     Transaction transaction = new Transaction(reference, accountIban, date, amount, fee, description);
     given(transactionCollection.addTransaction(any(Transaction.class))).willReturn(transaction);
-    CreateTransactionParams params = new CreateTransactionParams(reference, accountIban, date, amount, fee, description);
 
     // when
     Either<Error, Transaction> response = createTransaction.execute(params);

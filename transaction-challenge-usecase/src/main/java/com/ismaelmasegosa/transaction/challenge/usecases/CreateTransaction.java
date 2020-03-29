@@ -8,6 +8,7 @@ import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.TransactionCollection;
 import com.ismaelmasegosa.transaction.challenge.usecases.core.UseCase;
 import com.ismaelmasegosa.transaction.challenge.usecases.params.CreateTransactionParams;
+import java.util.function.Function;
 
 public class CreateTransaction implements UseCase<CreateTransactionParams, Either<Error, Transaction>> {
 
@@ -19,10 +20,16 @@ public class CreateTransaction implements UseCase<CreateTransactionParams, Eithe
 
   @Override
   public Either<Error, Transaction> execute(CreateTransactionParams params) {
-    Transaction transaction =
-        new Transaction(params.getReference(), params.getAccountIban(), params.getDate(), params.getAmount(), params.getFee(),
-            params.getDescription());
-    Transaction transactionSaved = accountCollection.addTransaction(transaction);
+    Transaction transactionSaved = accountCollection.addTransaction(mapAsDomainTransaction().apply(params));
     return right(transactionSaved);
+  }
+
+  private Function<CreateTransactionParams, Transaction> mapAsDomainTransaction() {
+    return this::asDomainTransaction;
+  }
+
+  public Transaction asDomainTransaction(CreateTransactionParams params) {
+    return new Transaction(params.getReference(), params.getAccountIban(), params.getDate(), params.getAmount(), params.getFee(),
+        params.getDescription());
   }
 }
