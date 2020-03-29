@@ -17,6 +17,7 @@ public class UpdateBalanceEventListener implements ApplicationListener<PayloadAp
 
   @Override
   public void onApplicationEvent(PayloadApplicationEvent<UpdateAccountBalanceEvent> event) {
-    throw new UnsupportedOperationException("Not implemented");
+    UpdateAccountBalanceEvent payload = event.getPayload();
+    accountBalanceProvider.updateAccountBalance(payload.getAccountIban(), payload.getBalance());
   }
 }
