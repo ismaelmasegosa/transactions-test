@@ -1,6 +1,7 @@
 package com.ismaelmasegosa.transaction.challenge.usecases;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -64,6 +65,30 @@ public class CreateTransactionTest {
     final String accountIban = "";
     final double amount = 0.0;
     final double fee = -3.18;
+    final String description = "Restaurant payment";
+    CreateTransactionParams params = new CreateTransactionParams(reference, accountIban, date, amount, fee, description);
+    Transaction transaction = new Transaction(reference, accountIban, date, amount, fee, description);
+    given(transactionCollection.addTransaction(any(Transaction.class))).willReturn(transaction);
+
+    // when
+    Either<Error, Transaction> response = createTransaction.execute(params);
+
+    // then
+    assertTrue(response.isLeft());
+    Error errorValidation = response.getLeft();
+    assertEquals(400, errorValidation.getStatusCode());
+    assertEquals(errors, errorValidation.getErrors());
+  }
+
+  @Test
+  public void given_A_Transaction_With_Negative_Amount_Greater_That_Balance_Account_When_The_Create_Transaction_Use_Case_Is_Executed_Then_Forbidden_Error_Should_Be_Returned() {
+    // given
+    List<String> errors = singletonList("Transaction not created, the total account balance can not be bellow zero");
+    long date = System.currentTimeMillis();
+    String reference = "12345A";
+    String accountIban = "ES9820385778983000760236";
+    final double amount = -1678.87;
+    final double fee = 3.18;
     final String description = "Restaurant payment";
     CreateTransactionParams params = new CreateTransactionParams(reference, accountIban, date, amount, fee, description);
     Transaction transaction = new Transaction(reference, accountIban, date, amount, fee, description);
