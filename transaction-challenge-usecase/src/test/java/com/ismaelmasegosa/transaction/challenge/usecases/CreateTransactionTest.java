@@ -6,9 +6,13 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import com.ismaelmasegosa.transaction.challenge.domain.core.Either;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Error;
+import com.ismaelmasegosa.transaction.challenge.domain.events.DomainEvent;
+import com.ismaelmasegosa.transaction.challenge.domain.events.DomainEventPublisher;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.TransactionCollection;
 import com.ismaelmasegosa.transaction.challenge.usecases.params.CreateTransactionParams;
@@ -16,6 +20,8 @@ import java.util.List;
 import org.junit.Test;
 
 public class CreateTransactionTest {
+
+  DomainEventPublisher eventPublisher = mock(DomainEventPublisher.class);
 
   TransactionCollection transactionCollection = mock(TransactionCollection.class);
 
@@ -38,6 +44,7 @@ public class CreateTransactionTest {
     Either<Error, Transaction> response = createTransaction.execute(params);
 
     // then
+    verify(eventPublisher, times(1)).publish(any(DomainEvent.class));
     assertTrue(response.isRight());
     Transaction transactionResponse = response.get();
     assertEquals(reference, transactionResponse.getReference());
