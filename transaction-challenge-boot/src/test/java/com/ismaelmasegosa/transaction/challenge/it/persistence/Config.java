@@ -7,6 +7,7 @@ import com.ismaelmasegosa.transaction.challenge.domain.core.Error;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.TransactionCollection;
 import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.TransactionRepository;
+import com.ismaelmasegosa.transaction.challenge.it.stubs.AccountBalanceCollectionStub;
 import com.ismaelmasegosa.transaction.challenge.it.stubs.DomainEventPublisherStub;
 import com.ismaelmasegosa.transaction.challenge.it.stubs.InMemoryTransactionRepositoryStub;
 import com.ismaelmasegosa.transaction.challenge.usecases.CreateTransaction;
@@ -29,6 +30,12 @@ public class Config {
   @ConditionalOnMissingBean(name = "eventPublisher")
   public DomainEventPublisherStub eventPublisher() {
     return new DomainEventPublisherStub();
+  }
+
+  @Bean
+  @ConditionalOnMissingBean(name = "accountBalanceCollection")
+  public AccountBalanceRepository accountBalanceCollection() {
+    return new AccountBalanceCollectionStub();
   }
 
   @Bean

@@ -16,7 +16,8 @@ import org.springframework.test.context.ContextConfiguration;
 @Documented
 @Inherited
 @EnableAutoConfiguration
-@ComponentScan({"com.ismaelmasegosa.transaction.challenge.infrastructure.persistence"})
+@ComponentScan(
+    {"com.ismaelmasegosa.transaction.challenge.infrastructure.persistence,com.ismaelmasegosa.transaction.challenge.infrastructure.provider"})
 @ContextConfiguration(classes = {Config.class})
 @Profile("it")
 public @interface RepositoryTest {
