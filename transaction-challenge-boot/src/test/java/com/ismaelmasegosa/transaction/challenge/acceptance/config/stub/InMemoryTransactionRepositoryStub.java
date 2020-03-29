@@ -1,10 +1,14 @@
 package com.ismaelmasegosa.transaction.challenge.acceptance.config.stub;
 
+import static java.util.Comparator.comparingDouble;
+
 import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.TransactionRepository;
 import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.entities.TransactionEntity;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -19,6 +23,21 @@ public class InMemoryTransactionRepositoryStub implements TransactionRepository 
   @Override
   public Optional<TransactionEntity> findByReference(String reference) {
     return Optional.ofNullable(transactionRepository.get(reference));
+  }
+
+  @Override
+  public List<TransactionEntity> findByAccountIbanOrderByAmount(String iban, int sort) {
+    List<TransactionEntity> filterCollection =
+        transactionRepository.values().stream().filter(transactionEntity -> transactionEntity.getAccountIban().equalsIgnoreCase(iban))
+            .collect(Collectors.toList());
+    List<TransactionEntity> sortCollection;
+    if (sort == -1) {
+      sortCollection =
+          filterCollection.stream().sorted(comparingDouble(TransactionEntity::getAmount).reversed()).collect(Collectors.toList());
+    } else {
+      sortCollection = filterCollection.stream().sorted(comparingDouble(TransactionEntity::getAmount)).collect(Collectors.toList());
+    }
+    return sortCollection;
   }
 
   @Override
