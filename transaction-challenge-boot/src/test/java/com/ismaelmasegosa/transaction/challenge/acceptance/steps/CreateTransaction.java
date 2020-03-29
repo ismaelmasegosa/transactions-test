@@ -12,7 +12,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ismaelmasegosa.transaction.challenge.acceptance.config.AcceptanceConfiguration;
 import com.ismaelmasegosa.transaction.challenge.acceptance.config.World;
+import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.TransactionRepository;
 import com.ismaelmasegosa.transaction.challenge.infrastructure.rest.dto.TransactionDto;
+import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -37,8 +39,11 @@ public class CreateTransaction extends AcceptanceConfiguration {
   @Autowired
   private ObjectMapper objectMapper;
 
+  @Autowired
+  private TransactionRepository transactionRepository;
+
   @Before
-  public void setUp() throws Exception {
+  public void setUp() {
     world.reset();
   }
 
@@ -99,6 +104,11 @@ public class CreateTransaction extends AcceptanceConfiguration {
     ResultActions resultActions = world.getResultActions();
     resultActions.andExpect(status().isBadRequest());
     resultActions.andExpect(jsonPath("$.errors", is(errors)));
+  }
+
+  @After
+  public void tearDown() {
+    transactionRepository.delete(world.getReference());
   }
 
   private String toJson(TransactionDto transactionDto) throws JsonProcessingException {
