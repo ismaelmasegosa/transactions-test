@@ -1,6 +1,6 @@
 Feature: Search transactions
 
-  @Create
+  @Create @Remove
   Scenario: Search transactions by account_iban sorted by ascending amount
     Given account_iban "ES9820385778983000760236" and sort "ascending" are provided
     When the list of transaction is requested

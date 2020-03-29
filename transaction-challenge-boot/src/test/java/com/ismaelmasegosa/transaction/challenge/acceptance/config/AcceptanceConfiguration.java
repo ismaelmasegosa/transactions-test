@@ -27,7 +27,6 @@ import org.springframework.web.context.WebApplicationContext;
 public class AcceptanceConfiguration {
 
   @Configuration
-  @Profile("acceptance")
   public static class CucumberConfiguration {
 
     @Autowired
