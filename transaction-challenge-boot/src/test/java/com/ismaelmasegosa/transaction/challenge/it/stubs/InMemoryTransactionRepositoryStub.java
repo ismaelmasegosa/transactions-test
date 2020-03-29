@@ -25,4 +25,9 @@ public class InMemoryTransactionRepositoryStub implements TransactionRepository 
     return transactionEntity;
   }
 
+  @Override
+  public void delete(String reference) {
+    transactionRepository.remove(reference);
+  }
+
 }
