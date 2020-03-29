@@ -1,16 +1,15 @@
-package com.ismaelmasegosa.transaction.challenge.infrastructure.balance;
+package com.ismaelmasegosa.transaction.challenge.it.stubs;
 
+import com.ismaelmasegosa.transaction.challenge.domain.account.AccountBalanceRepository;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-import org.springframework.stereotype.Component;
 
-@Component
-public class AccountBalanceCollection {
+public class AccountBalanceCollectionStub implements AccountBalanceRepository {
 
   private final Map<String, Double> balanceRepository;
 
-  public AccountBalanceCollection() {
+  public AccountBalanceCollectionStub() {
     balanceRepository = new HashMap<>();
   }
 
@@ -25,7 +24,7 @@ public class AccountBalanceCollection {
   }
 
   public double updateAccountBalance(String accountIban, double account) {
-    Double accountBalance = getAccountBalance(accountIban);
+    double accountBalance = getAccountBalance(accountIban);
     double finalBalance = accountBalance + account;
     balanceRepository.put(accountIban, finalBalance);
     return finalBalance;
