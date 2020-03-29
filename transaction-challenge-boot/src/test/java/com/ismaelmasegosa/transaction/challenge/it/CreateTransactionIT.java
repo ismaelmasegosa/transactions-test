@@ -48,8 +48,8 @@ public class CreateTransactionIT {
     TransactionEntity transactionEntity = optionalTransactionEntity.get();
     assertEquals(reference, transactionEntity.getReference());
     assertEquals(accountIban, transactionEntity.getAccountIban());
-    assertEquals(amount, transactionEntity.getAmount(), Double.POSITIVE_INFINITY);
-    assertEquals(fee, transactionEntity.getFee(), Double.POSITIVE_INFINITY);
+    assertEquals(amount, transactionEntity.getAmount(), Double.NaN);
+    assertEquals(fee, transactionEntity.getFee(), Double.NaN);
     assertEquals(date, transactionEntity.getDate());
     assertEquals(description, transactionEntity.getDescription());
   }
