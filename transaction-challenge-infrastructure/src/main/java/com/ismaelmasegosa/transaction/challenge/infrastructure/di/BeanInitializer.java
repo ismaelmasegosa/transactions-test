@@ -2,6 +2,7 @@ package com.ismaelmasegosa.transaction.challenge.infrastructure.di;
 
 import com.ismaelmasegosa.transaction.challenge.domain.core.Either;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Error;
+import com.ismaelmasegosa.transaction.challenge.domain.events.DomainEventPublisher;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.TransactionCollection;
 import com.ismaelmasegosa.transaction.challenge.usecases.CreateTransaction;
@@ -12,11 +13,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class BeanInitizalizer {
+public class BeanInitializer {
 
   @Bean
   @ConditionalOnMissingBean(name = "createTransaction")
-  public UseCase<CreateTransactionParams, Either<Error, Transaction>> createTransaction(TransactionCollection transactionCollection) {
-    return new CreateTransaction(transactionCollection);
+  public UseCase<CreateTransactionParams, Either<Error, Transaction>> createTransaction(DomainEventPublisher eventPublisher,
+      TransactionCollection transactionCollection) {
+    return new CreateTransaction(eventPublisher, transactionCollection);
   }
 }

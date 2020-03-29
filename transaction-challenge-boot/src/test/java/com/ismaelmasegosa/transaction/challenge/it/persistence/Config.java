@@ -31,7 +31,8 @@ public class Config {
 
   @Bean
   @ConditionalOnMissingBean(name = "createTransaction")
-  public UseCase<CreateTransactionParams, Either<Error, Transaction>> createTransaction(TransactionCollection transactionCollection) {
-    return new CreateTransaction(transactionCollection);
+  public UseCase<CreateTransactionParams, Either<Error, Transaction>> createTransaction(DomainEventPublisherStub eventPublisherStub,
+      TransactionCollection transactionCollection) {
+    return new CreateTransaction(eventPublisherStub, transactionCollection);
   }
 }
