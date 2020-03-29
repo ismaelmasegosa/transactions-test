@@ -1,5 +1,7 @@
 package com.ismaelmasegosa.transaction.challenge.domain.transaction;
 
+import static com.ismaelmasegosa.transaction.challenge.domain.transaction.reference.ReferenceGenerator.generateSystemReference;
+
 import java.util.Objects;
 
 public class Transaction {
@@ -17,12 +19,16 @@ public class Transaction {
   private String description;
 
   public Transaction(String reference, String accountIban, long date, double amount, double fee, String description) {
-    this.reference = reference;
+    this.reference = isEmpty(reference) ? generateSystemReference() : reference;
     this.accountIban = accountIban;
     this.date = date;
     this.amount = amount;
     this.fee = fee;
     this.description = description;
+  }
+
+  private boolean isEmpty(CharSequence cs) {
+    return cs == null || cs.length() == 0;
   }
 
   public String getReference() {
