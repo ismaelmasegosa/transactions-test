@@ -25,7 +25,7 @@ public class CreateTransactionTest {
 
   TransactionCollection transactionCollection = mock(TransactionCollection.class);
 
-  CreateTransaction createTransaction = new CreateTransaction(transactionCollection);
+  CreateTransaction createTransaction = new CreateTransaction(eventPublisher, transactionCollection);
 
   @Test
   public void given_A_Transaction_When_The_Create_Transaction_Use_Case_Is_Executed_Then_The_Created_Transacton_Should_Be_Returned() {
