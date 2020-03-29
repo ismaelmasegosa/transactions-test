@@ -9,6 +9,7 @@ import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
 import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.TransactionRepository;
 import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.entities.TransactionEntity;
 import com.ismaelmasegosa.transaction.challenge.it.persistence.RepositoryTest;
+import com.ismaelmasegosa.transaction.challenge.it.stubs.DomainEventPublisherStub;
 import com.ismaelmasegosa.transaction.challenge.usecases.core.UseCase;
 import com.ismaelmasegosa.transaction.challenge.usecases.params.CreateTransactionParams;
 import java.util.Optional;
@@ -24,13 +25,16 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class CreateTransactionIT {
 
   @Autowired
+  private DomainEventPublisherStub eventPublisher;
+
+  @Autowired
   private TransactionRepository transactionRepository;
 
   @Autowired
   private UseCase<CreateTransactionParams, Either<Error, Transaction>> createTransaction;
 
   @Test
-  public void given_Transaction_When_Save_Transaction_Is_Executed_Then_The_Transaction_Should_Be_Saved() {
+  public void given_Transaction_When_Save_Transaction_Is_Executed_Then_The_Transaction_Should_Be_Saved_And_Event_Should_Be_Published() {
     // given
     long date = System.currentTimeMillis();
     String reference = "12345A";
@@ -43,6 +47,7 @@ public class CreateTransactionIT {
     // when
     createTransaction.execute(params);
     Optional<TransactionEntity> optionalTransactionEntity = transactionRepository.findByReference(reference);
+
     // then
     assertTrue(optionalTransactionEntity.isPresent());
     TransactionEntity transactionEntity = optionalTransactionEntity.get();
@@ -52,5 +57,6 @@ public class CreateTransactionIT {
     assertEquals(fee, transactionEntity.getFee(), Double.NaN);
     assertEquals(date, transactionEntity.getDate());
     assertEquals(description, transactionEntity.getDescription());
+    assertEquals(1, eventPublisher.getEvents().size());
   }
 }
