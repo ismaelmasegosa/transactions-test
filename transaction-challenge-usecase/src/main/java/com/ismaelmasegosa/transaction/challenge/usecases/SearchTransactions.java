@@ -20,10 +20,6 @@ public class SearchTransactions implements UseCase<SearchTransactionsParams, Eit
 
   @Override
   public Either<Error, List<Transaction>> execute(SearchTransactionsParams params) {
-    if (!params.getSort().isEmpty()) {
-      return right(transactionCollection.findOrderByAmount(params.getSort()));
-    } else {
-      return right(transactionCollection.findByAccountIban(params.getAccountIban()));
-    }
+    return right(transactionCollection.findByAccountIbanOrderByAmount(params.getAccountIban(), params.getSort()));
   }
 }

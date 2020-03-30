@@ -30,7 +30,7 @@ public class SearchTransactionsTest {
     // given
     SearchTransactionsParams params = new SearchTransactionsParams("", "");
     List<Transaction> transactions = createTransactionsListOrderByDate();
-    given(transactionCollection.findByAccountIban("")).willReturn(transactions);
+    given(transactionCollection.findByAccountIbanOrderByAmount("", "")).willReturn(transactions);
 
     // when
     Either<Error, List<Transaction>> response = searchTransactions.execute(params);
@@ -51,7 +51,7 @@ public class SearchTransactionsTest {
     String accountIban = "ES9820385778983000760236";
     SearchTransactionsParams params = new SearchTransactionsParams(accountIban, "");
     List<Transaction> transactions = createTransactionsListFilterByAccountIbanOrderByDate(accountIban);
-    given(transactionCollection.findByAccountIban(accountIban)).willReturn(transactions);
+    given(transactionCollection.findByAccountIbanOrderByAmount(accountIban, "")).willReturn(transactions);
 
     // when
     Either<Error, List<Transaction>> response = searchTransactions.execute(params);
@@ -71,7 +71,7 @@ public class SearchTransactionsTest {
     String sort = "ascending";
     SearchTransactionsParams params = new SearchTransactionsParams("", sort);
     List<Transaction> transactions = createTransactionsListAscendingOrderByAmount();
-    given(transactionCollection.findOrderByAmount(sort)).willReturn(transactions);
+    given(transactionCollection.findByAccountIbanOrderByAmount("", sort)).willReturn(transactions);
 
     // when
     Either<Error, List<Transaction>> response = searchTransactions.execute(params);
@@ -92,7 +92,7 @@ public class SearchTransactionsTest {
     String sort = "descending";
     SearchTransactionsParams params = new SearchTransactionsParams("", sort);
     List<Transaction> transactions = createTransactionsListDescendingOrderByAmount();
-    given(transactionCollection.findOrderByAmount(sort)).willReturn(transactions);
+    given(transactionCollection.findByAccountIbanOrderByAmount("", sort)).willReturn(transactions);
 
     // when
     Either<Error, List<Transaction>> response = searchTransactions.execute(params);
