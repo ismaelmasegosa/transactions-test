@@ -38,6 +38,12 @@ public class InMemoryTransactionCollection implements TransactionCollection {
         .collect(Collectors.toList());
   }
 
+  @Override
+  public List<Transaction> findByAccountIban(String accountIban) {
+    return transactionRepository.findByAccountIban(accountIban).stream().sorted(comparingLong(TransactionEntity::getDate).reversed())
+        .map(entityToDomain).collect(Collectors.toList());
+  }
+
   private Transaction mapToDomain(TransactionEntity transactionEntity) {
     return entityToDomain.apply(transactionEntity);
   }

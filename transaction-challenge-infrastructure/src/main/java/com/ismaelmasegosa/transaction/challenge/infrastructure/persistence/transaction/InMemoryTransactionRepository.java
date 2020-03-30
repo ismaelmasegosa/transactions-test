@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -25,6 +26,12 @@ public class InMemoryTransactionRepository implements TransactionRepository {
   @Override
   public List<TransactionEntity> findAll() {
     return new ArrayList<>(transactionRepository.values());
+  }
+
+  @Override
+  public List<TransactionEntity> findByAccountIban(String accountIban) {
+    return transactionRepository.values().stream().filter(transactionEntity -> transactionEntity.getAccountIban().equals(accountIban))
+        .collect(Collectors.toList());
   }
 
   @Override

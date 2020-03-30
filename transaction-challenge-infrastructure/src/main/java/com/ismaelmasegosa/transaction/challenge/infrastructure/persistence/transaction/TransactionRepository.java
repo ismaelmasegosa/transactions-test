@@ -10,6 +10,8 @@ public interface TransactionRepository {
 
   List<TransactionEntity> findAll();
 
+  List<TransactionEntity> findByAccountIban(String accountIban);
+
   TransactionEntity save(TransactionEntity transactionEntity);
 
   void delete(String reference);
