@@ -45,6 +45,9 @@ public class InMemoryTransactionRepository implements TransactionRepository {
     if (sort.equalsIgnoreCase("ascending")) {
       transactionEntities =
           transactionRepository.values().stream().sorted(comparingDouble(TransactionEntity::getAmount)).collect(Collectors.toList());
+    } else if (sort.equalsIgnoreCase("descending")) {
+      transactionEntities = transactionRepository.values().stream().sorted(comparingDouble(TransactionEntity::getAmount).reversed())
+          .collect(Collectors.toList());
     } else {
       transactionEntities =
           transactionRepository.values().stream().sorted(comparingLong(TransactionEntity::getDate).reversed()).collect(Collectors.toList());
