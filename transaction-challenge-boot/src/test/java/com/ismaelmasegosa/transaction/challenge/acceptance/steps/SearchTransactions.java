@@ -1,5 +1,6 @@
 package com.ismaelmasegosa.transaction.challenge.acceptance.steps;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 @ActiveProfiles(profiles = {"test", "acceptance"})
 public class SearchTransactions {
@@ -46,17 +49,19 @@ public class SearchTransactions {
     world.setSort(sort);
   }
 
+  @Given("account_iban {string} and sort {string} are provided")
+  public void accountIbanAndSortAreProvided(String accountIban, String sort) {
+    world.setAccountIban(accountIban);
+    world.setSort(sort);
+  }
+
   @When("the list of transaction is requested")
   public void theListOfTransactionIsRequested() throws Exception {
+    MultiValueMap<String, String> queryParams = new LinkedMultiValueMap();
+    queryParams.add("iban", world.getAccountIban());
+    queryParams.add("sort", world.getSort());
+    ResultActions resultActions = mockMvc.perform(get("/transactions").queryParams(queryParams));
 
-    ResultActions resultActions;
-    if (!world.getSort().isEmpty()) {
-      resultActions = mockMvc.perform(get("/transactions").queryParam("sort", world.getSort()));
-    } else if (!world.getAccountIban().isEmpty()) {
-      resultActions = mockMvc.perform(get("/transactions").queryParam("iban", world.getAccountIban()));
-    } else {
-      resultActions = mockMvc.perform(get("/transactions"));
-    }
     world.setResultActions(resultActions);
   }
 
@@ -74,6 +79,7 @@ public class SearchTransactions {
   public void theListOfTransactionIsReturnedInDescendingOrderByDateAndFilterByTheAccountIban() throws Exception {
     ResultActions resultActions = world.getResultActions();
     resultActions.andExpect(status().isOk());
+    resultActions.andExpect(jsonPath("$", hasSize(3)));
     resultActions.andExpect(jsonPath("$.[0].reference", is("44444A")));
     resultActions.andExpect(jsonPath("$.[1].reference", is("33333A")));
     resultActions.andExpect(jsonPath("$.[2].reference", is("11111A")));
@@ -97,5 +103,15 @@ public class SearchTransactions {
     resultActions.andExpect(jsonPath("$.[1].reference", is("44444A")));
     resultActions.andExpect(jsonPath("$.[2].reference", is("11111A")));
     resultActions.andExpect(jsonPath("$.[3].reference", is("22222A")));
+  }
+
+  @Then("the list of transaction is returned in ascending order by date and filter by the account iban")
+  public void theListOfTransactionIsReturnedInAscendingOrderByDateAndFilterByTheAccountIban() throws Exception {
+    ResultActions resultActions = world.getResultActions();
+    resultActions.andExpect(status().isOk());
+    resultActions.andExpect(jsonPath("$", hasSize(3)));
+    resultActions.andExpect(jsonPath("$.[0].reference", is("11111A")));
+    resultActions.andExpect(jsonPath("$.[1].reference", is("44444A")));
+    resultActions.andExpect(jsonPath("$.[2].reference", is("33333A")));
   }
 }
