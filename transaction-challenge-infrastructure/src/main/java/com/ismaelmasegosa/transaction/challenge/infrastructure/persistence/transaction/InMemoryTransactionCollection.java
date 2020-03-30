@@ -1,7 +1,5 @@
 package com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction;
 
-import static java.util.Comparator.comparingLong;
-
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.TransactionCollection;
 import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.entities.TransactionEntity;
@@ -33,15 +31,10 @@ public class InMemoryTransactionCollection implements TransactionCollection {
   }
 
   @Override
-  public List<Transaction> findAll() {
-    return transactionRepository.findAll().stream().sorted(comparingLong(TransactionEntity::getDate).reversed()).map(entityToDomain)
-        .collect(Collectors.toList());
-  }
-
-  @Override
   public List<Transaction> findByAccountIban(String accountIban) {
-    return transactionRepository.findByAccountIban(accountIban).stream().sorted(comparingLong(TransactionEntity::getDate).reversed())
-        .map(entityToDomain).collect(Collectors.toList());
+    List<TransactionEntity> transactions =
+        accountIban.isEmpty() ? transactionRepository.findAll() : transactionRepository.findByAccountIban(accountIban);
+    return transactions.stream().map(entityToDomain).collect(Collectors.toList());
   }
 
   private Transaction mapToDomain(TransactionEntity transactionEntity) {

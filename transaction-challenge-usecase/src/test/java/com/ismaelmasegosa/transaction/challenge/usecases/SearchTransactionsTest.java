@@ -27,7 +27,7 @@ public class SearchTransactionsTest {
     // given
     SearchTransactionsParams params = new SearchTransactionsParams("", "");
     List<Transaction> transactions = createTransactionsListOrderByDate();
-    given(transactionCollection.findAll()).willReturn(transactions);
+    given(transactionCollection.findByAccountIban("")).willReturn(transactions);
 
     // when
     Either<Error, List<Transaction>> response = searchTransactions.execute(params);

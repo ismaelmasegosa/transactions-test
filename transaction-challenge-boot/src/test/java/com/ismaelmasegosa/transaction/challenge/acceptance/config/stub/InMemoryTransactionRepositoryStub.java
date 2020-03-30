@@ -1,12 +1,14 @@
 package com.ismaelmasegosa.transaction.challenge.acceptance.config.stub;
 
+import static java.util.Comparator.comparingLong;
+
 import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.TransactionRepository;
 import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.entities.TransactionEntity;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Repository;
 
@@ -32,13 +34,15 @@ public class InMemoryTransactionRepositoryStub implements TransactionRepository 
 
   @Override
   public List<TransactionEntity> findByAccountIban(String accountIban) {
-    return transactionRepository.values().stream().filter(transactionEntity -> transactionEntity.getAccountIban().equals(accountIban))
+    Predicate<TransactionEntity> predicate = transaction -> transaction.getAccountIban().equalsIgnoreCase(accountIban);
+    return transactionRepository.values().stream().filter(predicate).sorted(comparingLong(TransactionEntity::getDate).reversed())
         .collect(Collectors.toList());
   }
 
   @Override
   public List<TransactionEntity> findAll() {
-    return new ArrayList<>(transactionRepository.values());
+    return transactionRepository.values().stream().sorted(comparingLong(TransactionEntity::getDate).reversed())
+        .collect(Collectors.toList());
   }
 
   @Override
