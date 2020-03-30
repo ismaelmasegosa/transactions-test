@@ -78,4 +78,15 @@ public class GetTransactionStatus {
     resultActions.andExpect(jsonPath("$.status", is(word)));
     resultActions.andExpect(jsonPath("$.amount", is(finalAmount)));
   }
+
+  @Then("The system returns the status {word} and the amount and the fee")
+  public void theSystemReturnsTheStatusSETTLEDAndTheAmountAndTheFee(String word) throws Exception {
+    ResultActions resultActions = world.getResultActions();
+    TransactionEntity transactionEntity = world.getTransactionEntity();
+    resultActions.andExpect(status().isOk());
+    resultActions.andExpect(jsonPath("$.reference", is(world.getReference())));
+    resultActions.andExpect(jsonPath("$.status", is(word)));
+    resultActions.andExpect(jsonPath("$.amount", is(transactionEntity.getAmount())));
+    resultActions.andExpect(jsonPath("$.fee", is(transactionEntity.getFee())));
+  }
 }
