@@ -1,10 +1,17 @@
 package com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction;
 
-import static org.springframework.util.StringUtils.isEmpty;
+import static java.util.Collections.emptyList;
 
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.TransactionCollection;
 import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.entities.TransactionEntity;
+import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.filters.Filter;
+import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.filters.TransactionFilter;
+import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.filters.TransactionsFilterByAccounIban;
+import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.filters.TransactionsFilterByAccounIbanAndOrderByAmount;
+import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.filters.TransactionsNonFilter;
+import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.filters.TransactionsOrderByAmount;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -40,19 +47,16 @@ public class InMemoryTransactionCollection implements TransactionCollection {
 
   @Override
   public List<Transaction> findByAccountIbanOrderByAmount(String accountIban, String sort) {
-    List<TransactionEntity> transactions;
-    if (isEmpty(accountIban) && isEmpty(sort)) {
-      transactions = transactionRepository.findAll();
-    } else {
-      if (!isEmpty(accountIban) && isEmpty(sort)) {
-        transactions = transactionRepository.findByAccountIban(accountIban);
-      } else if (isEmpty(accountIban) && !isEmpty(sort)) {
-        transactions = transactionRepository.findOrderByAmount(sort);
-      } else {
-        transactions = transactionRepository.findByAccountIbanOrderByAmount(accountIban, sort);
-      }
-    }
-    return transactions.stream().map(entityToDomain).collect(Collectors.toList());
+
+    List<TransactionFilter> criterias = new ArrayList<>();
+    criterias.add(new TransactionsNonFilter(new Filter(accountIban, sort)));
+    criterias.add(new TransactionsFilterByAccounIbanAndOrderByAmount(new Filter(accountIban, sort)));
+    criterias.add(new TransactionsOrderByAmount(new Filter(accountIban, sort)));
+    criterias.add(new TransactionsFilterByAccounIban(new Filter(accountIban, sort)));
+    List<TransactionEntity> transactionEntities =
+        criterias.stream().filter(TransactionFilter::condition).map(filter -> filter.action(transactionRepository)).findFirst()
+            .orElse(emptyList());
+    return transactionEntities.stream().map(entityToDomain).collect(Collectors.toList());
   }
 
   private Transaction mapToDomain(TransactionEntity transactionEntity) {
