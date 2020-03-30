@@ -5,12 +5,12 @@ import static com.ismaelmasegosa.transaction.challenge.domain.core.Either.left;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Either;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Error;
 import com.ismaelmasegosa.transaction.challenge.domain.core.error.TransactionNotFoundError;
-import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.TransactionCollection;
+import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.TransactionStatus;
 import com.ismaelmasegosa.transaction.challenge.usecases.core.UseCase;
 import com.ismaelmasegosa.transaction.challenge.usecases.params.GetTransactionStatusParams;
 
-public class GetTransactionStatus implements UseCase<GetTransactionStatusParams, Either<Error, Transaction>> {
+public class GetTransactionStatus implements UseCase<GetTransactionStatusParams, Either<Error, TransactionStatus>> {
 
   private final TransactionCollection transactionCollection;
 
@@ -19,7 +19,7 @@ public class GetTransactionStatus implements UseCase<GetTransactionStatusParams,
   }
 
   @Override
-  public Either<Error, Transaction> execute(GetTransactionStatusParams params) {
+  public Either<Error, TransactionStatus> execute(GetTransactionStatusParams params) {
     if (!transactionCollection.findByReference(params.getReference()).isPresent()) {
       return left(new TransactionNotFoundError(params.getReference()));
     } else {
