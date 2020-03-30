@@ -2,6 +2,7 @@ package com.ismaelmasegosa.transaction.challenge.usecases.mothers;
 
 import static java.time.LocalDateTime.now;
 import static java.util.Arrays.asList;
+import static java.util.Comparator.comparingDouble;
 import static java.util.Comparator.comparingLong;
 
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
@@ -32,6 +33,11 @@ public class TransactionMother {
     List<Transaction> transactionsList = createTransactionsList();
     return transactionsList.stream().filter(transaction -> transaction.getAccountIban().equals(accountIban))
         .sorted(comparingLong(Transaction::getDate).reversed()).collect(Collectors.toList());
+  }
+
+  public static List<Transaction> createTransactionsListAscendingOrderByAmount() {
+    List<Transaction> transactionsList = createTransactionsList();
+    return transactionsList.stream().sorted(comparingDouble(Transaction::getAmount)).collect(Collectors.toList());
   }
 
   private static long getLocalDatePlusDays(long days) {

@@ -7,4 +7,7 @@ public interface TransactionCollection {
   Transaction addTransaction(Transaction transaction);
 
   List<Transaction> findByAccountIban(String accountIban);
+
+  List<Transaction> findOrderByAmount(String sort);
+
 }

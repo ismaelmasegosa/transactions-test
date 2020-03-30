@@ -1,5 +1,6 @@
 package com.ismaelmasegosa.transaction.challenge.usecases;
 
+import static com.ismaelmasegosa.transaction.challenge.usecases.mothers.TransactionMother.createTransactionsListAscendingOrderByAmount;
 import static com.ismaelmasegosa.transaction.challenge.usecases.mothers.TransactionMother.createTransactionsListFilterByAccountIbanOrderByDate;
 import static com.ismaelmasegosa.transaction.challenge.usecases.mothers.TransactionMother.createTransactionsListOrderByDate;
 import static org.junit.Assert.assertEquals;
@@ -60,5 +61,26 @@ public class SearchTransactionsTest {
     assertEquals(transactionsResponse.get(0).getReference(), "44444A");
     assertEquals(transactionsResponse.get(1).getReference(), "33333A");
     assertEquals(transactionsResponse.get(2).getReference(), "11111A");
+  }
+
+  @Test
+  public void given_A_Ascending_Sort_When_The_Search_Transactions_Use_Case_Is_Executed_Then_The_Transactions_Should_Be_Returned_In_Ascending_Order() {
+    // given
+    String sort = "ascending";
+    SearchTransactionsParams params = new SearchTransactionsParams("", sort);
+    List<Transaction> transactions = createTransactionsListAscendingOrderByAmount();
+    given(transactionCollection.findOrderByAmount(sort)).willReturn(transactions);
+
+    // when
+    Either<Error, List<Transaction>> response = searchTransactions.execute(params);
+
+    // then
+    assertTrue(response.isRight());
+    List<Transaction> transactionsResponse = new ArrayList<>(response.get());
+    assertEquals(4, transactionsResponse.size());
+    assertEquals(transactionsResponse.get(0).getReference(), "22222A");
+    assertEquals(transactionsResponse.get(1).getReference(), "11111A");
+    assertEquals(transactionsResponse.get(2).getReference(), "44444A");
+    assertEquals(transactionsResponse.get(3).getReference(), "33333A");
   }
 }
