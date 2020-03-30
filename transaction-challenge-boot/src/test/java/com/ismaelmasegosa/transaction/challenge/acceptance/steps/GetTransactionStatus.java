@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ismaelmasegosa.transaction.challenge.acceptance.config.AcceptanceConfiguration;
 import com.ismaelmasegosa.transaction.challenge.acceptance.config.World;
 import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.TransactionRepository;
 import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.entities.TransactionEntity;
@@ -19,7 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @ActiveProfiles(profiles = {"test", "acceptance"})
-public class GetTransactionStatus extends AcceptanceConfiguration {
+public class GetTransactionStatus {
 
   @Autowired
   private World world;
@@ -51,7 +50,7 @@ public class GetTransactionStatus extends AcceptanceConfiguration {
   public void statusShouldBeRetrieve(String channel) throws Exception {
     ResultActions resultActions = world.getResultActions();
     resultActions.andExpect(status().isNotFound());
-    resultActions.andExpect(jsonPath("$.refence", is(world.getReference())));
+    resultActions.andExpect(jsonPath("$.reference", is(world.getReference())));
     resultActions.andExpect(jsonPath("$.channel", is(channel)));
   }
 }
