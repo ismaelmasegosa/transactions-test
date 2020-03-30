@@ -2,11 +2,13 @@ package com.ismaelmasegosa.transaction.challenge.domain.transaction.status.rules
 
 import static com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Channel.INTERNAL;
 import static com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Status.SETTLED;
+import static java.time.Instant.ofEpochMilli;
 
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.TransactionStatus;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 
 public class InternalChannelAndDateBeforeToday implements StatusRules {
 
@@ -21,7 +23,7 @@ public class InternalChannelAndDateBeforeToday implements StatusRules {
 
   @Override
   public boolean condition() {
-    return isInternal() && isBeforeToday(transaction.getDate());
+    return isBeforeToday(transaction.getDate()) && isInternal();
   }
 
   @Override
@@ -34,6 +36,7 @@ public class InternalChannelAndDateBeforeToday implements StatusRules {
   }
 
   private boolean isBeforeToday(long transactionDate) {
-    return LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli() > transactionDate;
+    LocalDate date = LocalDate.from(LocalDateTime.ofInstant(ofEpochMilli(transactionDate), ZoneId.of("UTC")));
+    return date.isBefore(LocalDate.now());
   }
 }
