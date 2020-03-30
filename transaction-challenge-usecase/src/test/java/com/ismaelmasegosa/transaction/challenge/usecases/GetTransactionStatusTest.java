@@ -151,4 +151,31 @@ public class GetTransactionStatusTest {
     assertEquals(status, transactionStatusResponse.getStatus());
     assertEquals(expectedAmount, transactionStatusResponse.getAmount(), Double.NaN);
   }
+
+  @Test
+  public void given_A_Reference_And_ATM_And_Equal_Today_DateChannel_When_The_Get_Transaction_Status_Use_Case_Is_Executed_Then_The_Transaction_Should_Be_Returned() {
+    // given
+    String channel = "CLIENT";
+    String reference = "11111A";
+    long date = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli();
+    double amount = 120.98;
+    double fee = 2.00;
+    String accountIban = "ES9820385778983000760236";
+    String description = "Restaurant payment";
+    String status = "PENDING";
+    GetTransactionStatusParams params = new GetTransactionStatusParams(reference, channel);
+    Transaction transaction = new Transaction(reference, accountIban, date, amount, fee, description);
+    given(transactionCollection.findByReference(reference)).willReturn(of(transaction));
+
+    // when
+    Either<Error, TransactionStatus> response = getTransactionStatus.execute(params);
+
+    // then
+    double expectedAmount = amount - fee;
+    assertTrue(response.isRight());
+    TransactionStatus transactionStatusResponse = response.get();
+    assertEquals(reference, transactionStatusResponse.getReference());
+    assertEquals(status, transactionStatusResponse.getStatus());
+    assertEquals(expectedAmount, transactionStatusResponse.getAmount(), Double.NaN);
+  }
 }
