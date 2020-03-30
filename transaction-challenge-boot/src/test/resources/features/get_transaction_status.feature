@@ -26,10 +26,16 @@ Feature: Get transaction status
   @CreateTransactionEqualToday @RemoveTransactionsEqualToday
   Scenario Outline: Check status of transfer from CLIENT OR ATM channel
     Given valid reference <reference> and channel <channel> are provided
-    When I check the status from CLIENT or ATM channel the transaction date is equals today
+    When I check the status from CLIENT or ATM channel the transaction date is equal today
     Then  The system returns the status PENDING and the amount substracting the fee
 
     Examples:
       | channel | reference |
       | CLIENT  | 11111A   |
       | ATM     | 11111A   |
+
+  @CreateTransactionEqualToday @RemoveTransactionsEqualToday
+  Scenario: Check status of transfer from CLIENT channel
+    Given valid reference 11111A and channel INTERNAL are provided
+    When I check the status from CLIENT or ATM channel the transaction date is equal today
+    Then  The system returns the status PENDING and the amount and the fee
