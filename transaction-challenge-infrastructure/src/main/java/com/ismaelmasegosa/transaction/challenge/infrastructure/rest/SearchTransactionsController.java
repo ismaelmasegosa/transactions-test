@@ -30,7 +30,8 @@ public class SearchTransactionsController {
 
   @GetMapping("/transactions")
   public ResponseEntity<List<TransactionResponse>> findTransactions(
-      @RequestParam(name = "iban", required = false) String iban, @RequestParam(name = "sort", required = false) String sort) {
+      @RequestParam(name = "iban", required = false, defaultValue = "") String iban,
+      @RequestParam(name = "sort", required = false, defaultValue = "") String sort) {
     return okResponse(searchTransactions.execute(toParams(iban, sort)).get());
   }
 

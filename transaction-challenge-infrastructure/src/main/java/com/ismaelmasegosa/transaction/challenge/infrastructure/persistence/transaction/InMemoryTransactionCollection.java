@@ -1,5 +1,7 @@
 package com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction;
 
+import static org.springframework.util.StringUtils.isEmpty;
+
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.TransactionCollection;
 import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.entities.TransactionEntity;
@@ -33,8 +35,13 @@ public class InMemoryTransactionCollection implements TransactionCollection {
   @Override
   public List<Transaction> findByAccountIban(String accountIban) {
     List<TransactionEntity> transactions =
-        accountIban.isEmpty() ? transactionRepository.findAll() : transactionRepository.findByAccountIban(accountIban);
+        isEmpty(accountIban) ? transactionRepository.findAll() : transactionRepository.findByAccountIban(accountIban);
     return transactions.stream().map(entityToDomain).collect(Collectors.toList());
+  }
+
+  @Override
+  public List<Transaction> findOrderByAmount(String sort) {
+    return transactionRepository.findOrderByAmount(sort).stream().map(entityToDomain).collect(Collectors.toList());
   }
 
   private Transaction mapToDomain(TransactionEntity transactionEntity) {

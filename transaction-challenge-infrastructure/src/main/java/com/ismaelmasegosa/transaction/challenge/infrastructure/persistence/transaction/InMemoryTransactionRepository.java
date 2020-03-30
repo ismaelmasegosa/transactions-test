@@ -1,5 +1,6 @@
 package com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction;
 
+import static java.util.Comparator.comparingDouble;
 import static java.util.Comparator.comparingLong;
 
 import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.entities.TransactionEntity;
@@ -36,6 +37,19 @@ public class InMemoryTransactionRepository implements TransactionRepository {
     Predicate<TransactionEntity> predicate = transaction -> transaction.getAccountIban().equalsIgnoreCase(accountIban);
     return transactionRepository.values().stream().filter(predicate).sorted(comparingLong(TransactionEntity::getDate).reversed())
         .collect(Collectors.toList());
+  }
+
+  @Override
+  public List<TransactionEntity> findOrderByAmount(String sort) {
+    List<TransactionEntity> transactionEntities;
+    if (sort.equalsIgnoreCase("ascending")) {
+      transactionEntities =
+          transactionRepository.values().stream().sorted(comparingDouble(TransactionEntity::getAmount)).collect(Collectors.toList());
+    } else {
+      transactionEntities =
+          transactionRepository.values().stream().sorted(comparingLong(TransactionEntity::getDate).reversed()).collect(Collectors.toList());
+    }
+    return transactionEntities;
   }
 
   @Override

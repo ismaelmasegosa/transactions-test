@@ -12,6 +12,8 @@ public interface TransactionRepository {
 
   List<TransactionEntity> findByAccountIban(String accountIban);
 
+  List<TransactionEntity> findOrderByAmount(String sort);
+
   TransactionEntity save(TransactionEntity transactionEntity);
 
   void delete(String reference);
