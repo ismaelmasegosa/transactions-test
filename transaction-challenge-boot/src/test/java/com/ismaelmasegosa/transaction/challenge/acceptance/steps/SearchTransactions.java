@@ -88,4 +88,14 @@ public class SearchTransactions {
     resultActions.andExpect(jsonPath("$.[2].reference", is("44444A")));
     resultActions.andExpect(jsonPath("$.[3].reference", is("33333A")));
   }
+
+  @Then("the list of transaction is returned in descending order by amount")
+  public void theListOfTransactionIsReturnedInDescendingOrderByAmount() throws Exception {
+    ResultActions resultActions = world.getResultActions();
+    resultActions.andExpect(status().isOk());
+    resultActions.andExpect(jsonPath("$.[0].reference", is("33333A")));
+    resultActions.andExpect(jsonPath("$.[1].reference", is("44444A")));
+    resultActions.andExpect(jsonPath("$.[2].reference", is("11111A")));
+    resultActions.andExpect(jsonPath("$.[3].reference", is("22222A")));
+  }
 }
