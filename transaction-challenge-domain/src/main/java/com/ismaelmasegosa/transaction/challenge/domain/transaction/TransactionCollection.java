@@ -8,4 +8,7 @@ public interface TransactionCollection {
 
   List<Transaction> findAll();
 
+  List<Transaction> findByAccountIban(String accountIban);
+
+
 }
