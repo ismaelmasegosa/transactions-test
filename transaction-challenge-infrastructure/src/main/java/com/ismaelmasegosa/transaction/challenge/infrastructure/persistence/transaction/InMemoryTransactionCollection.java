@@ -33,15 +33,20 @@ public class InMemoryTransactionCollection implements TransactionCollection {
   }
 
   @Override
-  public List<Transaction> findByAccountIban(String accountIban) {
-    List<TransactionEntity> transactions =
-        isEmpty(accountIban) ? transactionRepository.findAll() : transactionRepository.findByAccountIban(accountIban);
+  public List<Transaction> findByAccountIbanOrderByAmount(String accountIban, String sort) {
+    List<TransactionEntity> transactions;
+    if (isEmpty(accountIban) && isEmpty(sort)) {
+      transactions = transactionRepository.findAll();
+    } else {
+      if (!isEmpty(accountIban) && isEmpty(sort)) {
+        transactions = transactionRepository.findByAccountIban(accountIban);
+      } else if (isEmpty(accountIban) && !isEmpty(sort)) {
+        transactions = transactionRepository.findOrderByAmount(sort);
+      } else {
+        transactions = transactionRepository.findByAccountIbanOrderByAmount(accountIban, sort);
+      }
+    }
     return transactions.stream().map(entityToDomain).collect(Collectors.toList());
-  }
-
-  @Override
-  public List<Transaction> findOrderByAmount(String sort) {
-    return transactionRepository.findOrderByAmount(sort).stream().map(entityToDomain).collect(Collectors.toList());
   }
 
   private Transaction mapToDomain(TransactionEntity transactionEntity) {

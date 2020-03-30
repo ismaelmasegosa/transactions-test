@@ -56,6 +56,24 @@ public class InMemoryTransactionRepository implements TransactionRepository {
   }
 
   @Override
+  public List<TransactionEntity> findByAccountIbanOrderByAmount(String accountIban, String sort) {
+    Predicate<TransactionEntity> predicate = transaction -> transaction.getAccountIban().equalsIgnoreCase(accountIban);
+    List<TransactionEntity> filteredTransactions = transactionRepository.values().stream().filter(predicate).collect(Collectors.toList());
+    List<TransactionEntity> sortedTransactions;
+
+    if (sort.equalsIgnoreCase("ascending")) {
+      sortedTransactions = filteredTransactions.stream().sorted(comparingDouble(TransactionEntity::getAmount)).collect(Collectors.toList());
+    } else if (sort.equalsIgnoreCase("descending")) {
+      sortedTransactions =
+          filteredTransactions.stream().sorted(comparingDouble(TransactionEntity::getAmount).reversed()).collect(Collectors.toList());
+    } else {
+      sortedTransactions =
+          filteredTransactions.stream().sorted(comparingLong(TransactionEntity::getDate).reversed()).collect(Collectors.toList());
+    }
+    return sortedTransactions;
+  }
+
+  @Override
   public TransactionEntity save(TransactionEntity transactionEntity) {
     transactionRepository.put(transactionEntity.getReference(), transactionEntity);
     return transactionEntity;
