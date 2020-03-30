@@ -18,7 +18,7 @@ public class GetTransactionStatusTest {
 
   TransactionCollection transactionCollection = mock(TransactionCollection.class);
 
-  GetTransactionStatus getTransactionStatus = new GetTransactionStatus();
+  GetTransactionStatus getTransactionStatus = new GetTransactionStatus(transactionCollection);
 
   @Test
   public void given_A_Invalid_Reference_When_The_Get_Transaction_Status_Use_Case_Is_Executed_Then_The_Transactions_Error_Should_Be_Returned() {
