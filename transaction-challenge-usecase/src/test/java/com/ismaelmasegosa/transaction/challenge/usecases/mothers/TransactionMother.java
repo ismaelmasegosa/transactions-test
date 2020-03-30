@@ -45,6 +45,12 @@ public class TransactionMother {
     return transactionsList.stream().sorted(comparingDouble(Transaction::getAmount).reversed()).collect(Collectors.toList());
   }
 
+  public static List<Transaction> createTransactionsListAscendingOrderByAmountAndFilterByIban(String accountIban) {
+    List<Transaction> transactionsList = createTransactionsList();
+    return transactionsList.stream().filter(transaction -> transaction.getAccountIban().equals(accountIban))
+        .sorted(comparingDouble(Transaction::getAmount)).collect(Collectors.toList());
+  }
+
   private static long getLocalDatePlusDays(long days) {
     return now().minusDays(days).toInstant(ZoneOffset.UTC).toEpochMilli();
   }

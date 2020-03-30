@@ -10,4 +10,6 @@ public interface TransactionCollection {
 
   List<Transaction> findOrderByAmount(String sort);
 
+  List<Transaction> findByAccountIbanOrderByAmount(String accountIban, String sort);
+
 }

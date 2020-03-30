@@ -1,6 +1,7 @@
 package com.ismaelmasegosa.transaction.challenge.usecases;
 
 import static com.ismaelmasegosa.transaction.challenge.usecases.mothers.TransactionMother.createTransactionsListAscendingOrderByAmount;
+import static com.ismaelmasegosa.transaction.challenge.usecases.mothers.TransactionMother.createTransactionsListAscendingOrderByAmountAndFilterByIban;
 import static com.ismaelmasegosa.transaction.challenge.usecases.mothers.TransactionMother.createTransactionsListDescendingOrderByAmount;
 import static com.ismaelmasegosa.transaction.challenge.usecases.mothers.TransactionMother.createTransactionsListFilterByAccountIbanOrderByDate;
 import static com.ismaelmasegosa.transaction.challenge.usecases.mothers.TransactionMother.createTransactionsListOrderByDate;
@@ -104,5 +105,26 @@ public class SearchTransactionsTest {
     assertEquals(transactionsResponse.get(1).getReference(), "44444A");
     assertEquals(transactionsResponse.get(2).getReference(), "11111A");
     assertEquals(transactionsResponse.get(3).getReference(), "22222A");
+  }
+
+  @Test
+  public void given_A_Account_IBAN_A_Descending_Sort_When_The_Search_Transactions_Use_Case_Is_Executed_Then_The_Transactions_Should_Be_Returned_In_Descending_Order() {
+    // given
+    String accountIban = "ES9820385778983000760236";
+    String sort = "ascending";
+    SearchTransactionsParams params = new SearchTransactionsParams(accountIban, sort);
+    List<Transaction> transactions = createTransactionsListAscendingOrderByAmountAndFilterByIban(accountIban);
+    given(transactionCollection.findByAccountIbanOrderByAmount(accountIban, sort)).willReturn(transactions);
+
+    // when
+    Either<Error, List<Transaction>> response = searchTransactions.execute(params);
+
+    // then
+    assertTrue(response.isRight());
+    List<Transaction> transactionsResponse = new ArrayList<>(response.get());
+    assertEquals(3, transactionsResponse.size());
+    assertEquals(transactionsResponse.get(0).getReference(), "11111A");
+    assertEquals(transactionsResponse.get(1).getReference(), "44444A");
+    assertEquals(transactionsResponse.get(2).getReference(), "33333A");
   }
 }
