@@ -1,5 +1,6 @@
 package com.ismaelmasegosa.transaction.challenge.domain.transaction.status.rules;
 
+import static com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Channel.ATM;
 import static com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Channel.CLIENT;
 import static com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Status.SETTLED;
 
@@ -8,11 +9,11 @@ import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Transa
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-public class ClientChannelAndDateBeforeToday implements StatusRules {
+public class ClientChannelOrAtmAndDateBeforeToday implements StatusRules {
 
   private Transaction transaction;
 
-  public ClientChannelAndDateBeforeToday(Transaction transaction, String channel) {
+  public ClientChannelOrAtmAndDateBeforeToday(Transaction transaction, String channel) {
     this.transaction = transaction;
     this.channel = channel;
   }
@@ -21,13 +22,17 @@ public class ClientChannelAndDateBeforeToday implements StatusRules {
 
   @Override
   public boolean condition() {
-    return channel.equalsIgnoreCase(CLIENT.name()) && isBeforeToday(transaction.getDate());
+    return isCLientOrAtm() && isBeforeToday(transaction.getDate());
   }
 
   @Override
   public TransactionStatus action() {
     double amount = transaction.getAmount() - transaction.getFee();
     return new TransactionStatus(transaction.getReference(), SETTLED.name(), amount, 0.0);
+  }
+
+  private boolean isCLientOrAtm() {
+    return channel.equalsIgnoreCase(CLIENT.name()) || channel.equalsIgnoreCase(ATM.name());
   }
 
   private boolean isBeforeToday(long transactionDate) {
