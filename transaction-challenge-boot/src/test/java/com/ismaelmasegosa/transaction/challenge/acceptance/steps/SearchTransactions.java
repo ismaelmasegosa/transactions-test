@@ -36,9 +36,14 @@ public class SearchTransactions {
     world.setAccountIban("");
   }
 
+  @Given("account_iban {string} are provided")
+  public void account_ibanAreProvided(String accountIban) {
+    world.setAccountIban(accountIban);
+  }
+
   @When("the list of transaction is requested")
   public void theListOfTransactionIsRequested() throws Exception {
-    ResultActions resultActions = mockMvc.perform(get("/transactions"));
+    ResultActions resultActions = mockMvc.perform(get("/transactions").queryParam("iban", world.getAccountIban()));
 
     world.setResultActions(resultActions);
   }
@@ -51,5 +56,14 @@ public class SearchTransactions {
     resultActions.andExpect(jsonPath("$.[1].reference", is("33333A")));
     resultActions.andExpect(jsonPath("$.[2].reference", is("22222A")));
     resultActions.andExpect(jsonPath("$.[3].reference", is("11111A")));
+  }
+
+  @Then("the list of transaction is returned in descending order by date and filter by the account iban")
+  public void theListOfTransactionIsReturnedInDescendingOrderByDateAndFilterByTheAccountIban() throws Exception {
+    ResultActions resultActions = world.getResultActions();
+    resultActions.andExpect(status().isOk());
+    resultActions.andExpect(jsonPath("$.[0].reference", is("44444A")));
+    resultActions.andExpect(jsonPath("$.[1].reference", is("33333A")));
+    resultActions.andExpect(jsonPath("$.[2].reference", is("11111A")));
   }
 }
