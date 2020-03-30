@@ -15,26 +15,26 @@ public class Hooks {
   TransactionRepository transactionRepository;
 
   @Before("@Create")
-  public void before() {
+  public void createTransactions() {
     transactionRepository
-        .save(createTransactionEntity("11111A", "ES9820385778983000760236", getLocalDatePlusDays(4), 120.98, 2.00, "Restaurant Payment"));
+        .save(createTransactionEntity("11111A", "ES9820385778983000760236", getLocalDateMinusDays(4), 120.98, 2.00, "Restaurant Payment"));
     transactionRepository
-        .save(createTransactionEntity("22222A", "ES9820385778983000732453", getLocalDatePlusDays(3), 39.90, 2.00, "Parking Payment"));
+        .save(createTransactionEntity("22222A", "ES9820385778983000732453", getLocalDateMinusDays(3), 39.90, 2.00, "Parking Payment"));
     transactionRepository
-        .save(createTransactionEntity("33333A", "ES9820385778983000760236", getLocalDatePlusDays(2), 1067.90, 2.00, "Car Payment"));
+        .save(createTransactionEntity("33333A", "ES9820385778983000760236", getLocalDateMinusDays(2), 1067.90, 2.00, "Car Payment"));
     transactionRepository
-        .save(createTransactionEntity("44444A", "ES9820385778983000760236", getLocalDatePlusDays(1), 908.90, 2.00, "House Payment"));
+        .save(createTransactionEntity("44444A", "ES9820385778983000760236", getLocalDateMinusDays(1), 908.90, 2.00, "House Payment"));
   }
 
   @After("@Remove")
-  public void after() {
+  public void deleteTransactions() {
     transactionRepository.delete("11111A");
     transactionRepository.delete("22222A");
     transactionRepository.delete("33333A");
     transactionRepository.delete("44444A");
   }
 
-  private long getLocalDatePlusDays(long days) {
+  private long getLocalDateMinusDays(long days) {
     return now().minusDays(days).toInstant(ZoneOffset.UTC).toEpochMilli();
   }
 }

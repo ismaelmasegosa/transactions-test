@@ -47,10 +47,35 @@ public class GetTransactionStatus {
   }
 
   @Then("{string} status should be retrieve")
-  public void statusShouldBeRetrieve(String channel) throws Exception {
+  public void statusShouldBeRetrieve(String status) throws Exception {
     ResultActions resultActions = world.getResultActions();
     resultActions.andExpect(status().isNotFound());
     resultActions.andExpect(jsonPath("$.reference", is(world.getReference())));
-    resultActions.andExpect(jsonPath("$.channel", is(channel)));
+    resultActions.andExpect(jsonPath("$.status", is(status)));
+  }
+
+  @Given("valid reference {word} and channel {word} are provided")
+  public void validReferenceReferenceAndChannelChannelAreProvided(String reference, String channel) {
+    world.setReference(reference);
+    world.setChannel(channel);
+    world.setTransactionEntity(transactionRepository.findByReference(reference).orElseGet(TransactionEntity::new));
+  }
+
+  @When("I check the status from CLIENT or ATM channel the transaction date is before today")
+  public void iCheckTheStatusFromCLIENTOrATMChannelTheTransactionDateIsBeforeToday() throws Exception {
+    ResultActions resultActions = mockMvc.perform(get("/transaction/" + world.getReference()).queryParam("channel", world.getChannel()));
+
+    world.setResultActions(resultActions);
+  }
+
+  @Then("The system returns the status {word} and the amount substracting the fee")
+  public void theSystemReturnsTheStatusAndTheAmountSubstractingTheFee(String word) throws Exception {
+    ResultActions resultActions = world.getResultActions();
+    TransactionEntity transactionEntity = world.getTransactionEntity();
+    double finalAmount = transactionEntity.getAmount() - transactionEntity.getFee();
+    resultActions.andExpect(status().isOk());
+    resultActions.andExpect(jsonPath("$.reference", is(world.getReference())));
+    resultActions.andExpect(jsonPath("$.status", is(word)));
+    resultActions.andExpect(jsonPath("$.amount", is(finalAmount)));
   }
 }
