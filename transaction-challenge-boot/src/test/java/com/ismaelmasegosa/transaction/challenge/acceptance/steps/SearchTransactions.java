@@ -41,10 +41,22 @@ public class SearchTransactions {
     world.setAccountIban(accountIban);
   }
 
+  @Given("sort {string} are provided")
+  public void sortAreProvided(String sort) {
+    world.setSort(sort);
+  }
+
   @When("the list of transaction is requested")
   public void theListOfTransactionIsRequested() throws Exception {
-    ResultActions resultActions = mockMvc.perform(get("/transactions").queryParam("iban", world.getAccountIban()));
 
+    ResultActions resultActions;
+    if (!world.getSort().isEmpty()) {
+      resultActions = mockMvc.perform(get("/transactions").queryParam("sort", world.getSort()));
+    } else if (!world.getAccountIban().isEmpty()) {
+      resultActions = mockMvc.perform(get("/transactions").queryParam("iban", world.getAccountIban()));
+    } else {
+      resultActions = mockMvc.perform(get("/transactions"));
+    }
     world.setResultActions(resultActions);
   }
 
@@ -65,5 +77,15 @@ public class SearchTransactions {
     resultActions.andExpect(jsonPath("$.[0].reference", is("44444A")));
     resultActions.andExpect(jsonPath("$.[1].reference", is("33333A")));
     resultActions.andExpect(jsonPath("$.[2].reference", is("11111A")));
+  }
+
+  @Then("the list of transaction is returned in ascending order by amount")
+  public void theListOfTransactionIsReturnedInAscendingOrderByAmount() throws Exception {
+    ResultActions resultActions = world.getResultActions();
+    resultActions.andExpect(status().isOk());
+    resultActions.andExpect(jsonPath("$.[0].reference", is("22222A")));
+    resultActions.andExpect(jsonPath("$.[1].reference", is("11111A")));
+    resultActions.andExpect(jsonPath("$.[2].reference", is("44444A")));
+    resultActions.andExpect(jsonPath("$.[3].reference", is("33333A")));
   }
 }

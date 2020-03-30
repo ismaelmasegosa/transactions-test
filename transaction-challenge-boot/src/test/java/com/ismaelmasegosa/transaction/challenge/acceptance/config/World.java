@@ -19,6 +19,8 @@ public class World {
 
   private ResultActions resultActions;
 
+  private String sort;
+
   public void reset() {
     this.reference = "";
     this.accountIban = "";
@@ -27,6 +29,7 @@ public class World {
     this.fee = 0.0;
     this.description = "";
     this.resultActions = null;
+    this.sort = "";
   }
 
   public String getReference() {
@@ -83,5 +86,13 @@ public class World {
 
   public void setResultActions(ResultActions resultActions) {
     this.resultActions = resultActions;
+  }
+
+  public String getSort() {
+    return sort;
+  }
+
+  public void setSort(String sort) {
+    this.sort = sort;
   }
 }
