@@ -1,5 +1,6 @@
 Feature: Search transactions
 
+  @Create @Remove
   Scenario: Search all transactions
     Given the account_iban and the sort are not provided
     When the list of transaction is requested
