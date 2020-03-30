@@ -17,3 +17,9 @@ Feature: Search transactions
     Given sort "ascending" are provided
     When the list of transaction is requested
     Then the list of transaction is returned in ascending order by amount
+
+  @Create @Remove
+  Scenario: Search transactions sort by descending amount
+    Given sort "descending" are provided
+    When the list of transaction is requested
+    Then the list of transaction is returned in descending order by amount
