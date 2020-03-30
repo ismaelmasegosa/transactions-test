@@ -19,7 +19,7 @@ public class SearchTransactionsTest {
 
   TransactionCollection transactionCollection = mock(TransactionCollection.class);
 
-  SearchTransactions searchTransactions = new SearchTransactions();
+  SearchTransactions searchTransactions = new SearchTransactions(transactionCollection);
 
   @Test
   public void given_A_Empty_Account_IBAN_And_Empty_Sort_When_The_Search_Transactions_Use_Case_Is_Executed_Then_The_Transactions_Should_Be_Returned() {
