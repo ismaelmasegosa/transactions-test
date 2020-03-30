@@ -40,6 +40,11 @@ public class TransactionMother {
     return transactionsList.stream().sorted(comparingDouble(Transaction::getAmount)).collect(Collectors.toList());
   }
 
+  public static List<Transaction> createTransactionsListDescendingOrderByAmount() {
+    List<Transaction> transactionsList = createTransactionsList();
+    return transactionsList.stream().sorted(comparingDouble(Transaction::getAmount).reversed()).collect(Collectors.toList());
+  }
+
   private static long getLocalDatePlusDays(long days) {
     return now().minusDays(days).toInstant(ZoneOffset.UTC).toEpochMilli();
   }
