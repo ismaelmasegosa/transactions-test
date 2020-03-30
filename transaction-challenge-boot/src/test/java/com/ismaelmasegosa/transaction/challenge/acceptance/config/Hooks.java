@@ -6,6 +6,7 @@ import static java.time.LocalDateTime.now;
 import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.TransactionRepository;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -42,6 +43,18 @@ public class Hooks {
 
   @After("@RemoveTransactionsBeforeToday")
   public void deleteTransactionsBeforeToday() {
+    transactionRepository.delete("11111A");
+  }
+
+  @Before("@CreateTransactionEqualToday")
+  public void createTransactionEqualsToday() {
+    transactionRepository.save(
+        createTransactionEntity("11111A", "ES9820385778983000760236", LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli(), 120.98,
+            2.00, "Restaurant Payment"));
+  }
+
+  @After("@RemoveTransactionsEqualToday")
+  public void deleteTransactionsEqualsToday() {
     transactionRepository.delete("11111A");
   }
 

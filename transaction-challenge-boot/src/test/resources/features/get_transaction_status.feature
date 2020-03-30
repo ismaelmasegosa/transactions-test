@@ -23,6 +23,7 @@ Feature: Get transaction status
     When I check the status from CLIENT or ATM channel the transaction date is before today
     Then  The system returns the status SETTLED and the amount and the fee
 
+  @CreateTransactionEqualToday @RemoveTransactionsEqualToday
   Scenario Outline: Check status of transfer from CLIENT OR ATM channel
     Given valid reference <reference> and channel <channel> are provided
     When I check the status from CLIENT or ATM channel the transaction date is equals today

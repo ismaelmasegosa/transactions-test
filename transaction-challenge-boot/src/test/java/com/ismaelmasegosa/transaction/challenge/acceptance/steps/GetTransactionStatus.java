@@ -61,8 +61,8 @@ public class GetTransactionStatus {
     world.setTransactionEntity(transactionRepository.findByReference(reference).orElseGet(TransactionEntity::new));
   }
 
-  @When("I check the status from CLIENT or ATM channel the transaction date is before today")
-  public void iCheckTheStatusFromCLIENTOrATMChannelTheTransactionDateIsBeforeToday() throws Exception {
+  @When("I check the status from CLIENT or ATM channel the transaction date is {word} today")
+  public void iCheckTheStatusFromCLIENTOrATMChannelTheTransactionDateIsBeforeToday(String word) throws Exception {
     ResultActions resultActions = mockMvc.perform(get("/transaction/" + world.getReference()).queryParam("channel", world.getChannel()));
 
     world.setResultActions(resultActions);
