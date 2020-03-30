@@ -2,7 +2,9 @@ package com.ismaelmasegosa.transaction.challenge.it.stubs;
 
 import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.TransactionRepository;
 import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.entities.TransactionEntity;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -23,6 +25,11 @@ public class InMemoryTransactionRepositoryStub implements TransactionRepository 
   public TransactionEntity save(TransactionEntity transactionEntity) {
     transactionRepository.put(transactionEntity.getReference(), transactionEntity);
     return transactionEntity;
+  }
+
+  @Override
+  public List<TransactionEntity> findAll() {
+    return new ArrayList<>(transactionRepository.values());
   }
 
   @Override
