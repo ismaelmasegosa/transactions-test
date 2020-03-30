@@ -6,6 +6,7 @@ Feature: Get transaction status
     When a request of check transaction status is received
     Then "INVALID" status should be retrieve
 
+  @CreateTransactionBeforeToday @RemoveTransactionsBeforeToday
   Scenario Outline: Check status of transfer from CLIENT channel
     Given valid reference <reference> and channel <channel> are provided
     When I check the status from CLIENT or ATM channel the transaction date is before today
