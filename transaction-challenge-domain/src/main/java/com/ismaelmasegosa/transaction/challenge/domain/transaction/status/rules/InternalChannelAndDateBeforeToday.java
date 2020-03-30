@@ -1,7 +1,6 @@
 package com.ismaelmasegosa.transaction.challenge.domain.transaction.status.rules;
 
-import static com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Channel.ATM;
-import static com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Channel.CLIENT;
+import static com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Channel.INTERNAL;
 import static com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Status.SETTLED;
 
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
@@ -9,11 +8,11 @@ import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Transa
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-public class ClientChannelOrAtmAndDateBeforeToday implements StatusRules {
+public class InternalChannelAndDateBeforeToday implements StatusRules {
 
   private Transaction transaction;
 
-  public ClientChannelOrAtmAndDateBeforeToday(Transaction transaction, String channel) {
+  public InternalChannelAndDateBeforeToday(Transaction transaction, String channel) {
     this.transaction = transaction;
     this.channel = channel;
   }
@@ -22,17 +21,16 @@ public class ClientChannelOrAtmAndDateBeforeToday implements StatusRules {
 
   @Override
   public boolean condition() {
-    return isCLientOrAtm() && isBeforeToday(transaction.getDate());
+    return isInternal() && isBeforeToday(transaction.getDate());
   }
 
   @Override
   public TransactionStatus action() {
-    double amount = transaction.getAmount() - transaction.getFee();
-    return new TransactionStatus(transaction.getReference(), SETTLED.name(), amount, 0.0);
+    return new TransactionStatus(transaction.getReference(), SETTLED.name(), transaction.getAmount(), transaction.getFee());
   }
 
-  private boolean isCLientOrAtm() {
-    return channel.equalsIgnoreCase(CLIENT.name()) || channel.equalsIgnoreCase(ATM.name());
+  private boolean isInternal() {
+    return channel.equalsIgnoreCase(INTERNAL.name());
   }
 
   private boolean isBeforeToday(long transactionDate) {
