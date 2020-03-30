@@ -16,3 +16,9 @@ Feature: Get transaction status
       | channel | reference |
       | CLIENT  | 11111A   |
       | ATM     | 11111A   |
+
+  @CreateTransactionBeforeToday @RemoveTransactionsBeforeToday
+  Scenario: Check status of transfer from CLIENT channel
+    Given valid reference 11111A and channel INTERNAL are provided
+    When I check the status from CLIENT or ATM channel the transaction date is before today
+    Then  The system returns the status SETTLED and the amount and the fee
