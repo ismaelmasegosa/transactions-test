@@ -63,10 +63,11 @@ public class GetTransactionStatusTest {
     Either<Error, TransactionStatus> response = getTransactionStatus.execute(params);
 
     // then
+    double expectedAmount = amount - fee;
     assertTrue(response.isRight());
     TransactionStatus transactionStatusResponse = response.get();
     assertEquals(reference, transactionStatusResponse.getReference());
     assertEquals(status, transactionStatusResponse.getStatus());
-    assertEquals(amount, transactionStatusResponse.getAmount(), Double.NaN);
+    assertEquals(expectedAmount, transactionStatusResponse.getAmount(), Double.NaN);
   }
 }
