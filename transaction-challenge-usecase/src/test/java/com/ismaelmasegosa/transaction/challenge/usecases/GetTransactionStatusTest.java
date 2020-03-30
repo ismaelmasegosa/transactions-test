@@ -41,7 +41,7 @@ public class GetTransactionStatusTest {
     TransactionError transactionError = error.getTransactionError();
     assertEquals(404, error.getStatusCode());
     assertEquals(reference, transactionError.getReference());
-    assertEquals("INVALID", transactionError.getChannel());
+    assertEquals("INVALID", transactionError.getStatus());
   }
 
   @Test

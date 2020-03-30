@@ -6,7 +6,7 @@ public class TransactionError {
 
   private String reference;
 
-  private final static String CHANNEL = "INVALID";
+  private final static String STATUS = "INVALID";
 
   public TransactionError(String reference) {
     this.reference = reference;
@@ -20,8 +20,8 @@ public class TransactionError {
     this.reference = reference;
   }
 
-  public String getChannel() {
-    return CHANNEL;
+  public String getStatus() {
+    return STATUS;
   }
 
   @Override

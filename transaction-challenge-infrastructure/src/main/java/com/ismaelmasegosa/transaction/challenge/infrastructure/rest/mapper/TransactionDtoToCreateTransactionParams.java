@@ -15,11 +15,11 @@ public class TransactionDtoToCreateTransactionParams implements Function<Transac
   @Override
   public CreateTransactionParams apply(TransactionDto dto) {
     long date = dto.getDate() != null ? dto.getDate().toInstant(ZoneOffset.UTC).toEpochMilli() : System.currentTimeMillis();
-    return new CreateTransactionParams(dto.getReference(), dto.getAccountIban(), date, roundToTwodDecimals(dto.getAmount()), dto.getFee(),
+    return new CreateTransactionParams(dto.getReference(), dto.getAccountIban(), date, roundToTwoDecimals(dto.getAmount()), dto.getFee(),
         dto.getDescription());
   }
 
-  public double roundToTwodDecimals(double amount) {
+  private double roundToTwoDecimals(double amount) {
     return new BigDecimal(amount).setScale(2, HALF_EVEN).doubleValue();
   }
 }

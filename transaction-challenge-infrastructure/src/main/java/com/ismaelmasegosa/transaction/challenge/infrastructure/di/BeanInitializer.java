@@ -6,6 +6,7 @@ import com.ismaelmasegosa.transaction.challenge.domain.core.Error;
 import com.ismaelmasegosa.transaction.challenge.domain.events.DomainEventPublisher;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.TransactionCollection;
+import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.TransactionStatus;
 import com.ismaelmasegosa.transaction.challenge.usecases.CreateTransaction;
 import com.ismaelmasegosa.transaction.challenge.usecases.GetTransactionStatus;
 import com.ismaelmasegosa.transaction.challenge.usecases.SearchTransactions;
@@ -37,7 +38,7 @@ public class BeanInitializer {
 
   @Bean
   @ConditionalOnMissingBean(name = "getTransactionStatus")
-  public UseCase<GetTransactionStatusParams, Either<Error, Transaction>> getTransactionStatus(TransactionCollection transactionCollection) {
+  public UseCase<GetTransactionStatusParams, Either<Error, TransactionStatus>> getTransactionStatus(TransactionCollection transactionCollection) {
     return new GetTransactionStatus(transactionCollection);
   }
 }
