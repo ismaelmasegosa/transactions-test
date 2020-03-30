@@ -4,6 +4,7 @@ import static com.ismaelmasegosa.transaction.challenge.domain.transaction.status
 
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.rules.ClientOrAtmChannelAndDateBeforeToday;
+import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.rules.ClientOrAtmChannelAndDateEqualsToday;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.rules.InternalChannelAndDateBeforeToday;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.rules.StatusRules;
 import java.util.HashSet;
@@ -15,6 +16,7 @@ public class TransactionsStatusProvider {
     Set<StatusRules> criterias = new HashSet<>();
     criterias.add(new ClientOrAtmChannelAndDateBeforeToday(transaction, channel));
     criterias.add(new InternalChannelAndDateBeforeToday(transaction, channel));
+    criterias.add(new ClientOrAtmChannelAndDateEqualsToday(transaction, channel));
     return criterias.stream().filter(StatusRules::condition).map(StatusRules::action).findFirst()
         .orElseGet(() -> createInvalidTransactionStatus(transaction));
   }
