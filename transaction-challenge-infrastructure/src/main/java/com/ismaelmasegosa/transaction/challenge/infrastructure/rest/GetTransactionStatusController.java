@@ -31,7 +31,7 @@ public class GetTransactionStatusController {
 
   @GetMapping("/transaction/{reference}")
   public ResponseEntity<?> findTransactions(@PathVariable(name = "reference") String reference,
-      @RequestParam(name = "channel") String channel) {
+      @RequestParam(name = "channel", required = false) String channel) {
     return getTransactionStatus.execute(toParams(reference, channel)).fold(ErrorHandler::returnResponseEntity, createdResponse());
   }
 
