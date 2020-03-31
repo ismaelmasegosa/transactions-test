@@ -35,13 +35,13 @@ public class GetTransactionStatus implements UseCase<GetTransactionStatusParams,
       return left(createBadRequestResponse(validationError.getErrors()));
     } else {
       Optional<Transaction> optionalTransaction = transactionCollection.findByReference(params.getReference());
-      if (optionalTransaction.isPresent()) {
-        Transaction transaction = optionalTransaction.get();
-        return right(transactionsStatusProvider.getTransactionStatus(transaction, params.getChannel()));
-      } else {
-        return left(new TransactionNotFoundError(params.getReference()));
-      }
+      return optionalTransaction.<Either<Error, TransactionStatus>>map(transaction -> right(getTransactionStatus(params, transaction)))
+          .orElseGet(() -> left(new TransactionNotFoundError(params.getReference())));
     }
+  }
+
+  private TransactionStatus getTransactionStatus(GetTransactionStatusParams params, Transaction transaction) {
+    return transactionsStatusProvider.getTransactionStatus(transaction, params.getChannel());
   }
 
   private BadRequestError createBadRequestResponse(List<String> errors) {
