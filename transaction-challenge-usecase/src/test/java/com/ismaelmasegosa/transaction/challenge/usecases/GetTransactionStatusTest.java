@@ -1,5 +1,6 @@
 package com.ismaelmasegosa.transaction.challenge.usecases;
 
+import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.junit.Assert.assertEquals;
@@ -16,6 +17,7 @@ import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Transa
 import com.ismaelmasegosa.transaction.challenge.usecases.params.GetTransactionStatusParams;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import org.junit.Test;
 
 public class GetTransactionStatusTest {
@@ -45,7 +47,7 @@ public class GetTransactionStatusTest {
   }
 
   @Test
-  public void given_A_Reference_And_Client_And_Before_Today_Date_Channel_When_The_Get_Transaction_Status_Use_Case_Is_Executed_Then_The_Transaction_Should_Be_Returned() {
+  public void given_A_Reference_And_Client_Channel_And_Before_Today_Date_When_The_Get_Transaction_Status_Use_Case_Is_Executed_Then_The_Transaction_Should_Be_Returned() {
     // given
     String channel = "CLIENT";
     String reference = "11111A";
@@ -99,7 +101,7 @@ public class GetTransactionStatusTest {
   }
 
   @Test
-  public void given_A_Reference_And_Internal_And_Before_Today_Date_Channel_When_The_Get_Transaction_Status_Use_Case_Is_Executed_Then_The_Transaction_Should_Be_Returned() {
+  public void given_A_Reference_And_Internal_Channel_And_Before_Today_Date_When_The_Get_Transaction_Status_Use_Case_Is_Executed_Then_The_Transaction_Should_Be_Returned() {
     // given
     String channel = "INTERNAL";
     String reference = "11111A";
@@ -126,7 +128,7 @@ public class GetTransactionStatusTest {
   }
 
   @Test
-  public void given_A_Reference_And_Client_And_Equal_Today_DateChannel_When_The_Get_Transaction_Status_Use_Case_Is_Executed_Then_The_Transaction_Should_Be_Returned() {
+  public void given_A_Reference_And_Client_Channel_And_Equal_Today_Date_When_The_Get_Transaction_Status_Use_Case_Is_Executed_Then_The_Transaction_Should_Be_Returned() {
     // given
     String channel = "CLIENT";
     String reference = "11111A";
@@ -153,7 +155,7 @@ public class GetTransactionStatusTest {
   }
 
   @Test
-  public void given_A_Reference_And_ATM_And_Equal_Today_DateChannel_When_The_Get_Transaction_Status_Use_Case_Is_Executed_Then_The_Transaction_Should_Be_Returned() {
+  public void given_A_Reference_And_ATM_Channel_And_Equal_Today_Date_When_The_Get_Transaction_Status_Use_Case_Is_Executed_Then_The_Transaction_Should_Be_Returned() {
     // given
     String channel = "CLIENT";
     String reference = "11111A";
@@ -180,7 +182,7 @@ public class GetTransactionStatusTest {
   }
 
   @Test
-  public void given_A_Reference_And_Internal_And_Equal_Today_Date_Channel_When_The_Get_Transaction_Status_Use_Case_Is_Executed_Then_The_Transaction_Should_Be_Returned() {
+  public void given_A_Reference_And_Internal_Channel_And_Equal_Today_Date_When_The_Get_Transaction_Status_Use_Case_Is_Executed_Then_The_Transaction_Should_Be_Returned() {
     // given
     String channel = "INTERNAL";
     String reference = "11111A";
@@ -207,7 +209,7 @@ public class GetTransactionStatusTest {
   }
 
   @Test
-  public void given_A_Reference_And_Client_And_Greater_Today_DateChannel_When_The_Get_Transaction_Status_Use_Case_Is_Executed_Then_The_Transaction_Should_Be_Returned() {
+  public void given_A_Reference_And_Client_Channel_And_Greater_Today_DateWhen_The_Get_Transaction_Status_Use_Case_Is_Executed_Then_The_Transaction_Should_Be_Returned() {
     // given
     String channel = "CLIENT";
     String reference = "11111A";
@@ -261,7 +263,7 @@ public class GetTransactionStatusTest {
   }
 
   @Test
-  public void given_A_Reference_And_Internal_And_Greater_Today_Date_Channel_When_The_Get_Transaction_Status_Use_Case_Is_Executed_Then_The_Transaction_Should_Be_Returned() {
+  public void given_A_Reference_And_Internal_Channel_And_Greater_Today_Date_When_The_Get_Transaction_Status_Use_Case_Is_Executed_Then_The_Transaction_Should_Be_Returned() {
     // given
     String channel = "INTERNAL";
     String reference = "11111A";
@@ -285,5 +287,24 @@ public class GetTransactionStatusTest {
     assertEquals(status, transactionStatusResponse.getStatus());
     assertEquals(amount, transactionStatusResponse.getAmount(), Double.NaN);
     assertEquals(fee, transactionStatusResponse.getFee(), Double.NaN);
+  }
+
+  @Test
+  public void given_A_Reference_And_Invalid_Channel_When_The_Get_Transaction_Status_Use_Case_Is_Executed_Then_The_Transaction_Should_Be_Returned() {
+    // given
+    List<String> errors = singletonList("The channel must be CLIENT, ATM or INTERNAL");
+    String channel = "INVALID";
+    String reference = "11111A";
+    GetTransactionStatusParams params = new GetTransactionStatusParams(reference, channel);
+
+
+    // when
+    Either<Error, TransactionStatus> response = getTransactionStatus.execute(params);
+
+    // then
+    assertTrue(response.isLeft());
+    Error errorResponse = response.getLeft();
+    assertEquals(400, errorResponse.getStatusCode());
+    assertEquals(errors, errorResponse.getErrors());
   }
 }
