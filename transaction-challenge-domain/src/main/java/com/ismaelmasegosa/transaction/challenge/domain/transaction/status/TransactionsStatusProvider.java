@@ -9,6 +9,7 @@ import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.rules.
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.rules.ClientOrAtmChannelAndDateEqualsToday;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.rules.InternalChannelAndDateBeforeToday;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.rules.InternalChannelAndDateEqualToday;
+import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.rules.InternalChannelAndDateGreaterToday;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.rules.StatusRules;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,6 +24,7 @@ public class TransactionsStatusProvider {
     criterias.add(new InternalChannelAndDateEqualToday(transaction, channel));
     criterias.add(new ClientChannelAndDateGreaterToday(transaction, channel));
     criterias.add(new AtmChannelAndDateGreaterToday(transaction, channel));
+    criterias.add(new InternalChannelAndDateGreaterToday(transaction, channel));
     return criterias.stream().filter(StatusRules::condition).map(StatusRules::action).findFirst()
         .orElseGet(() -> createInvalidTransactionStatus(transaction));
   }
