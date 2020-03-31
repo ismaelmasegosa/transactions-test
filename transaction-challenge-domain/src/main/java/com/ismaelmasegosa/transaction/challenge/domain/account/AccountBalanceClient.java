@@ -1,6 +1,6 @@
 package com.ismaelmasegosa.transaction.challenge.domain.account;
 
-public interface AccountBalanceProvider {
+public interface AccountBalanceClient {
 
   double getAccountBalance(String accountIban);
 

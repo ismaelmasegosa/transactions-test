@@ -17,7 +17,7 @@ import org.springframework.test.context.ContextConfiguration;
 @Inherited
 @EnableAutoConfiguration
 @ComponentScan(
-    {"com.ismaelmasegosa.transaction.challenge.infrastructure.balance", "com.ismaelmasegosa.transaction.challenge.infrastructure.events",
+    {"com.ismaelmasegosa.transaction.challenge.infrastructure.account.balance", "com.ismaelmasegosa.transaction.challenge.infrastructure.events",
         "com.ismaelmasegosa.transaction.challenge.infrastructure.provider"})
 @ContextConfiguration(classes = EventConfiguration.class)
 @Profile("event")

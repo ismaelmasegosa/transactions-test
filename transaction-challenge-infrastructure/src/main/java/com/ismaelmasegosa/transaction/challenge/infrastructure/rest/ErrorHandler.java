@@ -7,6 +7,7 @@ import static org.springframework.http.HttpStatus.valueOf;
 
 import com.ismaelmasegosa.transaction.challenge.domain.core.Error;
 import com.ismaelmasegosa.transaction.challenge.infrastructure.rest.dto.ErrorResponse;
+import java.time.Instant;
 import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class ErrorHandler {
   }
 
   private static ErrorResponse createErrorResponse(int statusCode, List<String> errors) {
-    return new ErrorResponse(statusCode, valueOf(statusCode).name(), System.currentTimeMillis(), errors);
+    return new ErrorResponse(statusCode, valueOf(statusCode).name(), Instant.now().toEpochMilli(), errors);
   }
 
 }

@@ -4,7 +4,7 @@ import static com.ismaelmasegosa.transaction.challenge.domain.core.Either.left;
 import static com.ismaelmasegosa.transaction.challenge.domain.core.Either.right;
 import static java.util.Collections.singletonList;
 
-import com.ismaelmasegosa.transaction.challenge.domain.account.AccountBalanceProvider;
+import com.ismaelmasegosa.transaction.challenge.domain.account.AccountBalanceClient;
 import com.ismaelmasegosa.transaction.challenge.domain.account.events.UpdateAccountBalanceEvent;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Either;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Error;
@@ -28,14 +28,14 @@ public class CreateTransaction implements UseCase<CreateTransactionParams, Eithe
 
   private final DomainEventPublisher eventPublisher;
 
-  private final AccountBalanceProvider accountBalanceProvider;
+  private final AccountBalanceClient accountBalanceClient;
 
   private final TransactionCollection transactionCollection;
 
-  public CreateTransaction(DomainEventPublisher eventPublisher, AccountBalanceProvider accountBalanceProvider,
+  public CreateTransaction(DomainEventPublisher eventPublisher, AccountBalanceClient accountBalanceClient,
       TransactionCollection transactionCollection) {
     this.eventPublisher = eventPublisher;
-    this.accountBalanceProvider = accountBalanceProvider;
+    this.accountBalanceClient = accountBalanceClient;
     this.transactionCollection = transactionCollection;
   }
 
@@ -81,7 +81,7 @@ public class CreateTransaction implements UseCase<CreateTransactionParams, Eithe
   }
 
   private boolean hasAvailableAccountBalance(CreateTransactionParams params) {
-    double accountBalance = accountBalanceProvider.getAccountBalance(params.getAccountIban());
+    double accountBalance = accountBalanceClient.getAccountBalance(params.getAccountIban());
     double totalAmount = calculateTotalAmount(params.getAmount(), params.getFee());
     double finalAccountBalance = accountBalance + totalAmount;
     return finalAccountBalance > 0;

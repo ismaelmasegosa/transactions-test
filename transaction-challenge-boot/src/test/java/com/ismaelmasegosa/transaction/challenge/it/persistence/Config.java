@@ -1,13 +1,13 @@
 package com.ismaelmasegosa.transaction.challenge.it.persistence;
 
-import com.ismaelmasegosa.transaction.challenge.domain.account.AccountBalanceProvider;
-import com.ismaelmasegosa.transaction.challenge.domain.account.AccountBalanceRepository;
+import com.ismaelmasegosa.transaction.challenge.domain.account.AccountBalanceClient;
+import com.ismaelmasegosa.transaction.challenge.infrastructure.account.balance.provider.AccountBalanceProvider;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Either;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Error;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.TransactionCollection;
 import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.TransactionRepository;
-import com.ismaelmasegosa.transaction.challenge.it.stubs.AccountBalanceCollectionStub;
+import com.ismaelmasegosa.transaction.challenge.it.stubs.InMemoryAccountBalanceProviderStub;
 import com.ismaelmasegosa.transaction.challenge.it.stubs.DomainEventPublisherStub;
 import com.ismaelmasegosa.transaction.challenge.it.stubs.InMemoryTransactionRepositoryStub;
 import com.ismaelmasegosa.transaction.challenge.usecases.CreateTransaction;
@@ -33,15 +33,15 @@ public class Config {
   }
 
   @Bean
-  @ConditionalOnMissingBean(name = "accountBalanceCollection")
-  public AccountBalanceRepository accountBalanceCollection() {
-    return new AccountBalanceCollectionStub();
+  @ConditionalOnMissingBean(name = "accountBalanceProvider")
+  public AccountBalanceProvider accountBalanceProvider() {
+    return new InMemoryAccountBalanceProviderStub();
   }
 
   @Bean
   @ConditionalOnMissingBean(name = "createTransaction")
   public UseCase<CreateTransactionParams, Either<Error, Transaction>> createTransaction(DomainEventPublisherStub eventPublisherStub,
-      AccountBalanceProvider accountBalanceProvider, TransactionCollection transactionCollection) {
-    return new CreateTransaction(eventPublisherStub, accountBalanceProvider, transactionCollection);
+      AccountBalanceClient accountBalanceClient, TransactionCollection transactionCollection) {
+    return new CreateTransaction(eventPublisherStub, accountBalanceClient, transactionCollection);
   }
 }
