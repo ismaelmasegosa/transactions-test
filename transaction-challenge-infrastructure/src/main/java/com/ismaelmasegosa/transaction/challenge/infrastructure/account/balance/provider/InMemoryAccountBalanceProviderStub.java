@@ -1,17 +1,16 @@
-package com.ismaelmasegosa.transaction.challenge.infrastructure.balance.persistence;
+package com.ismaelmasegosa.transaction.challenge.infrastructure.account.balance.provider;
 
-import com.ismaelmasegosa.transaction.challenge.domain.account.AccountBalanceRepository;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AccountBalanceCollection implements AccountBalanceRepository {
+public class InMemoryAccountBalanceProviderStub implements AccountBalanceProvider {
 
   private final Map<String, Double> balanceRepository;
 
-  public AccountBalanceCollection() {
+  public InMemoryAccountBalanceProviderStub() {
     balanceRepository = new HashMap<>();
   }
 

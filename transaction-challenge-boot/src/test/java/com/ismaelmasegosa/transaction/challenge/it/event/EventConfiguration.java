@@ -1,7 +1,7 @@
 package com.ismaelmasegosa.transaction.challenge.it.event;
 
-import com.ismaelmasegosa.transaction.challenge.domain.account.AccountBalanceRepository;
-import com.ismaelmasegosa.transaction.challenge.it.stubs.AccountBalanceCollectionStub;
+import com.ismaelmasegosa.transaction.challenge.infrastructure.account.balance.provider.AccountBalanceProvider;
+import com.ismaelmasegosa.transaction.challenge.it.stubs.InMemoryAccountBalanceProviderStub;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Configuration;
 public class EventConfiguration {
 
   @Bean
-  @ConditionalOnMissingBean(name = "accountBalanceCollection")
-  public AccountBalanceRepository accountBalanceCollection() {
-    return new AccountBalanceCollectionStub();
+  @ConditionalOnMissingBean(name = "accountBalanceProvider")
+  public AccountBalanceProvider accountBalanceProvider() {
+    return new InMemoryAccountBalanceProviderStub();
   }
 }

@@ -2,7 +2,7 @@ package com.ismaelmasegosa.transaction.challenge.it;
 
 import static org.junit.Assert.assertEquals;
 
-import com.ismaelmasegosa.transaction.challenge.domain.account.AccountBalanceRepository;
+import com.ismaelmasegosa.transaction.challenge.infrastructure.account.balance.provider.AccountBalanceProvider;
 import com.ismaelmasegosa.transaction.challenge.domain.account.events.UpdateAccountBalanceEvent;
 import com.ismaelmasegosa.transaction.challenge.domain.events.DomainEventPublisher;
 import com.ismaelmasegosa.transaction.challenge.it.event.EventTest;
@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class UpdateAccountBalanceIT {
 
   @Autowired
-  private AccountBalanceRepository accountBalanceRepository;
+  private AccountBalanceProvider accountBalanceProvider;
 
   @Autowired
   private DomainEventPublisher domainEventPublisher;
@@ -29,13 +29,13 @@ public class UpdateAccountBalanceIT {
     String accountIban = "ES9820385778983000760236";
     double amount = 193.38;
     UpdateAccountBalanceEvent updateAccountBalanceEvent = new UpdateAccountBalanceEvent(accountIban, amount);
-    double initialBalance = accountBalanceRepository.getAccountBalance(accountIban);
+    double initialBalance = accountBalanceProvider.getAccountBalance(accountIban);
 
     // when
     domainEventPublisher.publish(updateAccountBalanceEvent);
 
     // then
-    double finalAccountBalance = accountBalanceRepository.getAccountBalance(accountIban);
+    double finalAccountBalance = accountBalanceProvider.getAccountBalance(accountIban);
     double expectedFinalAccountBalance = initialBalance + amount;
     assertEquals(expectedFinalAccountBalance, finalAccountBalance,Double.NaN);
   }

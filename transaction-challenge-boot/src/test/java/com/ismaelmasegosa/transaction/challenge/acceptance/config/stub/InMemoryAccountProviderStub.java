@@ -1,15 +1,15 @@
-package com.ismaelmasegosa.transaction.challenge.it.stubs;
+package com.ismaelmasegosa.transaction.challenge.acceptance.config.stub;
 
-import com.ismaelmasegosa.transaction.challenge.domain.account.AccountBalanceRepository;
+import com.ismaelmasegosa.transaction.challenge.infrastructure.account.balance.provider.AccountBalanceProvider;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class AccountBalanceCollectionStub implements AccountBalanceRepository {
+public class InMemoryAccountProviderStub implements AccountBalanceProvider {
 
   private final Map<String, Double> balanceRepository;
 
-  public AccountBalanceCollectionStub() {
+  public InMemoryAccountProviderStub() {
     balanceRepository = new HashMap<>();
   }
 

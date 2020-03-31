@@ -15,7 +15,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.util.StringUtils.isEmpty;
 
-import com.ismaelmasegosa.transaction.challenge.domain.account.AccountBalanceProvider;
+import com.ismaelmasegosa.transaction.challenge.domain.account.AccountBalanceClient;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Either;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Error;
 import com.ismaelmasegosa.transaction.challenge.domain.events.DomainEvent;
@@ -33,13 +33,13 @@ public class CreateTransactionTest {
 
   TransactionCollection transactionCollection = mock(TransactionCollection.class);
 
-  AccountBalanceProvider accountBalanceProvider = mock(AccountBalanceProvider.class);
+  AccountBalanceClient accountBalanceClient = mock(AccountBalanceClient.class);
 
-  CreateTransaction createTransaction = new CreateTransaction(eventPublisher, accountBalanceProvider, transactionCollection);
+  CreateTransaction createTransaction = new CreateTransaction(eventPublisher, accountBalanceClient, transactionCollection);
 
   @Before
   public void setUp() {
-    given(accountBalanceProvider.getAccountBalance(anyString())).willReturn(678.89);
+    given(accountBalanceClient.getAccountBalance(anyString())).willReturn(678.89);
   }
 
   @Test
