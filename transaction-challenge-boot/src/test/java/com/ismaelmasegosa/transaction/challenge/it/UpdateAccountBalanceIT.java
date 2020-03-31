@@ -2,9 +2,9 @@ package com.ismaelmasegosa.transaction.challenge.it;
 
 import static org.junit.Assert.assertEquals;
 
-import com.ismaelmasegosa.transaction.challenge.infrastructure.account.balance.provider.AccountBalanceProvider;
 import com.ismaelmasegosa.transaction.challenge.domain.account.events.UpdateAccountBalanceEvent;
 import com.ismaelmasegosa.transaction.challenge.domain.events.DomainEventPublisher;
+import com.ismaelmasegosa.transaction.challenge.infrastructure.account.balance.provider.AccountBalanceProvider;
 import com.ismaelmasegosa.transaction.challenge.it.event.EventTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
