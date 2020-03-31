@@ -19,7 +19,7 @@ public class TransactionStatusToTransactionStatusResponse implements Function<Tr
   }
 
   private Double isNullValue(double amount) {
-    return amount != 0.0 ? amount : null;
+    return amount != 0.0 ? roundToTwoDecimals(amount) : null;
   }
 
   private double roundToTwoDecimals(double amount) {
