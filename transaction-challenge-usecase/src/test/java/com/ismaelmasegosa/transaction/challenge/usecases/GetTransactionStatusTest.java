@@ -1,6 +1,5 @@
 package com.ismaelmasegosa.transaction.challenge.usecases;
 
-import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.junit.Assert.assertEquals;
@@ -17,7 +16,6 @@ import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Transa
 import com.ismaelmasegosa.transaction.challenge.usecases.params.GetTransactionStatusParams;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.List;
 import org.junit.Test;
 
 public class GetTransactionStatusTest {
@@ -290,21 +288,29 @@ public class GetTransactionStatusTest {
   }
 
   @Test
-  public void given_A_Reference_And_Invalid_Channel_When_The_Get_Transaction_Status_Use_Case_Is_Executed_Then_The_Transaction_Should_Be_Returned() {
+  public void given_A_Reference_And_Empty_Channel_And_Greater_Today_Date_When_The_Get_Transaction_Status_Use_Case_Is_Executed_Then_The_Transaction_Should_Be_Returned() {
     // given
-    List<String> errors = singletonList("The channel must be CLIENT, ATM or INTERNAL");
-    String channel = "INVALID";
+    String channel = "";
     String reference = "11111A";
+    long date = LocalDateTime.now().plusDays(2).toInstant(ZoneOffset.UTC).toEpochMilli();
+    double amount = 120.98;
+    double fee = 2.00;
+    String accountIban = "ES9820385778983000760236";
+    String description = "Restaurant payment";
+    String status = "FUTURE";
     GetTransactionStatusParams params = new GetTransactionStatusParams(reference, channel);
-
+    Transaction transaction = new Transaction(reference, accountIban, date, amount, fee, description);
+    given(transactionCollection.findByReference(reference)).willReturn(of(transaction));
 
     // when
     Either<Error, TransactionStatus> response = getTransactionStatus.execute(params);
 
     // then
-    assertTrue(response.isLeft());
-    Error errorResponse = response.getLeft();
-    assertEquals(400, errorResponse.getStatusCode());
-    assertEquals(errors, errorResponse.getErrors());
+    assertTrue(response.isRight());
+    TransactionStatus transactionStatusResponse = response.get();
+    assertEquals(reference, transactionStatusResponse.getReference());
+    assertEquals(status, transactionStatusResponse.getStatus());
+    assertEquals(amount, transactionStatusResponse.getAmount(), Double.NaN);
+    assertEquals(fee, transactionStatusResponse.getFee(), Double.NaN);
   }
 }
