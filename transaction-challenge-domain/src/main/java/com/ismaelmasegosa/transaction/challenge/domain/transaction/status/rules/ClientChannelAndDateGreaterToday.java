@@ -1,8 +1,7 @@
 package com.ismaelmasegosa.transaction.challenge.domain.transaction.status.rules;
 
-import static com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Channel.ATM;
 import static com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Channel.CLIENT;
-import static com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Status.SETTLED;
+import static com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Status.FUTURE;
 import static java.time.Instant.ofEpochMilli;
 
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
@@ -11,11 +10,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-public class ClientOrAtmChannelAndDateBeforeToday implements StatusRules {
+public class ClientChannelAndDateGreaterToday implements StatusRules {
 
   private Transaction transaction;
 
-  public ClientOrAtmChannelAndDateBeforeToday(Transaction transaction, String channel) {
+  public ClientChannelAndDateGreaterToday(Transaction transaction, String channel) {
     this.transaction = transaction;
     this.channel = channel;
   }
@@ -24,21 +23,21 @@ public class ClientOrAtmChannelAndDateBeforeToday implements StatusRules {
 
   @Override
   public boolean condition() {
-    return isBeforeToday(transaction.getDate()) && isClientOrAtm();
+    return isGreaterToday(transaction.getDate()) && isCLientOrAtm();
   }
 
   @Override
   public TransactionStatus action() {
     double amount = transaction.getAmount() - transaction.getFee();
-    return new TransactionStatus(transaction.getReference(), SETTLED.name(), amount, 0.0);
+    return new TransactionStatus(transaction.getReference(), FUTURE.name(), amount, 0.0);
   }
 
-  private boolean isClientOrAtm() {
-    return channel.equalsIgnoreCase(CLIENT.name()) || channel.equalsIgnoreCase(ATM.name());
+  private boolean isCLientOrAtm() {
+    return channel.equalsIgnoreCase(CLIENT.name());
   }
 
-  private boolean isBeforeToday(long transactionDate) {
+  private boolean isGreaterToday(long transactionDate) {
     LocalDate date = LocalDate.from(LocalDateTime.ofInstant(ofEpochMilli(transactionDate), ZoneId.of("UTC")));
-    return date.isBefore(LocalDate.now());
+    return date.isAfter(LocalDate.now());
   }
 }
