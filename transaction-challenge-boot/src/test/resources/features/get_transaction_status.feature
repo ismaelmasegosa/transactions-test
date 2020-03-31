@@ -14,8 +14,8 @@ Feature: Get transaction status
 
     Examples:
       | channel | reference |
-      | CLIENT  | 11111A   |
-      | ATM     | 11111A   |
+      | CLIENT  | 11111A    |
+      | ATM     | 11111A    |
 
   @CreateTransactionBeforeToday @RemoveTransactionsBeforeToday
   Scenario: Check status of transfer from INTERNAL channel
@@ -31,8 +31,8 @@ Feature: Get transaction status
 
     Examples:
       | channel | reference |
-      | CLIENT  | 11111A   |
-      | ATM     | 11111A   |
+      | CLIENT  | 11111A    |
+      | ATM     | 11111A    |
 
   @CreateTransactionEqualToday @RemoveTransactionsEqualToday
   Scenario: Check status of transfer from INTERNAL channel
@@ -59,7 +59,7 @@ Feature: Get transaction status
     Then  The system returns the status FUTURE and the amount and the fee
 
   @CreateTransactionGreaterToday @RemoveTransactionsGreaterToday
-  Scenario: Check status of transfer from INVALID channel
-    Given valid reference 11111A and channel INVALID are provided
-    When I check the status from CLIENT channel the transaction date is greater today
-    Then  The system returns a validation error
+  Scenario: Check status of transfer from empty channel
+    Given valid reference 11111A are provided
+    When the channel are not provider and the transaction date is greater today
+    Then  The system returns the status FUTURE and the amount and the fee
