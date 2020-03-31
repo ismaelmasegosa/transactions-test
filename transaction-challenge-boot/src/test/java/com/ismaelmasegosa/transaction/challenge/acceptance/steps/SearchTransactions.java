@@ -57,7 +57,7 @@ public class SearchTransactions {
 
   @When("the list of transaction is requested")
   public void theListOfTransactionIsRequested() throws Exception {
-    MultiValueMap<String, String> queryParams = new LinkedMultiValueMap();
+    MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
     queryParams.add("iban", world.getAccountIban());
     queryParams.add("sort", world.getSort());
     ResultActions resultActions = mockMvc.perform(get("/transactions").queryParams(queryParams));
