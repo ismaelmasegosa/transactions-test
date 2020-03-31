@@ -89,7 +89,7 @@ public class GetTransactionStatus {
   }
 
   @Then("The system returns the status {word} and the amount and the fee")
-  public void theSystemReturnsTheStatusSETTLEDAndTheAmountAndTheFee(String word) throws Exception {
+  public void theSystemReturnsTheStatusAndTheAmountAndTheFee(String word) throws Exception {
     ResultActions resultActions = world.getResultActions();
     TransactionEntity transactionEntity = world.getTransactionEntity();
     resultActions.andExpect(status().isOk());
@@ -106,5 +106,18 @@ public class GetTransactionStatus {
     TransactionEntity transactionEntity = world.getTransactionEntity();
     resultActions.andExpect(status().isBadRequest());
     resultActions.andExpect(jsonPath("$.errors", is(errors)));
+  }
+
+  @Given("valid reference {word} are provided")
+  public void validReferenceAreProvided(String word) {
+    world.setReference(word);
+    world.setTransactionEntity(transactionRepository.findByReference(word).orElseGet(TransactionEntity::new));
+  }
+
+  @When("the channel are not provider and the transaction date is greater today")
+  public void theChannelAreNotProviderAndTheTransactionDateIsGreaterToday() throws Exception {
+    ResultActions resultActions = mockMvc.perform(get("/transaction/" + world.getReference()));
+
+    world.setResultActions(resultActions);
   }
 }
