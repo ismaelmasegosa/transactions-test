@@ -10,6 +10,7 @@ import com.ismaelmasegosa.transaction.challenge.domain.core.Either;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Error;
 import com.ismaelmasegosa.transaction.challenge.domain.core.Validation;
 import com.ismaelmasegosa.transaction.challenge.domain.core.error.BadRequestError;
+import com.ismaelmasegosa.transaction.challenge.domain.core.error.ConflictError;
 import com.ismaelmasegosa.transaction.challenge.domain.events.DomainEvent;
 import com.ismaelmasegosa.transaction.challenge.domain.events.DomainEventPublisher;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
@@ -17,6 +18,7 @@ import com.ismaelmasegosa.transaction.challenge.domain.transaction.TransactionCo
 import com.ismaelmasegosa.transaction.challenge.usecases.core.UseCase;
 import com.ismaelmasegosa.transaction.challenge.usecases.params.CreateTransactionParams;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
@@ -43,17 +45,23 @@ public class CreateTransaction implements UseCase<CreateTransactionParams, Eithe
     if (validationError.hasErrors()) {
       return left(createBadRequestResponse(validationError.getErrors()));
     } else {
-      if (hasAvailableAccountBalance(params)) {
-        return right(mapAsDomainTransaction().andThen(addTransaction()).andThen(publishEvent()).apply(params));
-      } else {
-        return left(createBadRequestResponse(singletonList(HAS_NOT_AVAILABLE_BALANCE)));
-      }
+      Optional<Transaction> optionalTransaction = transactionCollection.findByReference(params.getReference());
+      return optionalTransaction.<Either<Error, Transaction>>map(transaction -> left(createConflictErrorResponse()))
+          .orElseGet(() -> createTransactionAction(params));
     }
   }
 
   private Function<CreateTransactionParams, Transaction> mapAsDomainTransaction() {
     return params -> new Transaction(params.getReference(), params.getAccountIban(), params.getDate(), params.getAmount(), params.getFee(),
         params.getDescription());
+  }
+
+  private Either<Error, Transaction> createTransactionAction(CreateTransactionParams params) {
+    if (hasAvailableAccountBalance(params)) {
+      return right(mapAsDomainTransaction().andThen(addTransaction()).andThen(publishEvent()).apply(params));
+    } else {
+      return left(createBadRequestResponse(singletonList(HAS_NOT_AVAILABLE_BALANCE)));
+    }
   }
 
   private UnaryOperator<Transaction> addTransaction() {
@@ -81,6 +89,10 @@ public class CreateTransaction implements UseCase<CreateTransactionParams, Eithe
 
   private BadRequestError createBadRequestResponse(List<String> errors) {
     return new BadRequestError(errors);
+  }
+
+  private ConflictError createConflictErrorResponse() {
+    return new ConflictError(singletonList("Al ready exist a transaction with same reference"));
   }
 
   private double calculateTotalAmount(double amount, double fee) {

@@ -13,12 +13,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ismaelmasegosa.transaction.challenge.acceptance.config.AcceptanceConfiguration;
 import com.ismaelmasegosa.transaction.challenge.acceptance.config.World;
 import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.TransactionRepository;
+import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.entities.TransactionEntity;
 import com.ismaelmasegosa.transaction.challenge.infrastructure.rest.dto.TransactionDto;
 import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -57,6 +59,20 @@ public class CreateTransaction extends AcceptanceConfiguration {
     world.setAmount(amount);
     world.setFee(fee);
     world.setDescription(description);
+  }
+
+  @Given(
+      "a exist reference {string}, account_iban {string}, date {string}, amount {double}, fee {double} and description {string} are provided")
+  public void aExistReferenceAccount_ibanDateAmountFeeAndDescriptionAreProvided(String reference, String accountIban, String date,
+      double amount, double fee, String description) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+    world.setReference(reference);
+    world.setAccountIban(accountIban);
+    world.setDate(LocalDateTime.parse(date, formatter));
+    world.setAmount(amount);
+    world.setFee(fee);
+    world.setDescription(description);
+    transactionRepository.save(new TransactionEntity(reference, accountIban, Instant.now().toEpochMilli(), amount, fee, description));
   }
 
   @When("a request of create a transaction is received")
@@ -103,6 +119,14 @@ public class CreateTransaction extends AcceptanceConfiguration {
     List<String> errors = singletonList("Transaction not created, the total account balance can not be bellow zero");
     ResultActions resultActions = world.getResultActions();
     resultActions.andExpect(status().isBadRequest());
+    resultActions.andExpect(jsonPath("$.errors", is(errors)));
+  }
+
+  @Then("an existing transaction error should be returned")
+  public void anExistingTransactionErrorShouldBeReturned() throws Exception {
+    List<String> errors = singletonList("Al ready exist a transaction with same reference");
+    ResultActions resultActions = world.getResultActions();
+    resultActions.andExpect(status().isConflict());
     resultActions.andExpect(jsonPath("$.errors", is(errors)));
   }
 

@@ -2,6 +2,8 @@ package com.ismaelmasegosa.transaction.challenge.usecases;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -51,6 +53,7 @@ public class CreateTransactionTest {
     String description = "Restaurant payment";
     CreateTransactionParams params = new CreateTransactionParams(reference, accountIban, date, amount, fee, description);
     Transaction transaction = new Transaction(reference, accountIban, date, amount, fee, description);
+    given(transactionCollection.findByReference(anyString())).willReturn(empty());
     given(transactionCollection.addTransaction(any(Transaction.class))).willReturn(transaction);
 
     // when
@@ -80,6 +83,7 @@ public class CreateTransactionTest {
     final String description = "Restaurant payment";
     CreateTransactionParams params = new CreateTransactionParams(reference, accountIban, date, amount, fee, description);
     Transaction transaction = new Transaction(reference, accountIban, date, amount, fee, description);
+    given(transactionCollection.findByReference(anyString())).willReturn(empty());
     given(transactionCollection.addTransaction(any(Transaction.class))).willReturn(transaction);
 
     // when
@@ -104,6 +108,7 @@ public class CreateTransactionTest {
     final String description = "Restaurant payment";
     CreateTransactionParams params = new CreateTransactionParams(reference, accountIban, date, amount, fee, description);
     Transaction transaction = new Transaction(reference, accountIban, date, amount, fee, description);
+    given(transactionCollection.findByReference(anyString())).willReturn(empty());
     given(transactionCollection.addTransaction(any(Transaction.class))).willReturn(transaction);
 
     // when
@@ -119,7 +124,6 @@ public class CreateTransactionTest {
   @Test
   public void given_A_Transaction_Without_Reference_When_The_Create_Transaction_Use_Case_Is_Executed_Then_The_Created_Transaction_With_Reference_Should_Be_Returned() {
     // given
-    List<String> errors = singletonList("Transaction not created, the total account balance can not be bellow zero");
     long date = System.currentTimeMillis();
     String reference = null;
     String accountIban = "ES9820385778983000760236";
@@ -128,6 +132,7 @@ public class CreateTransactionTest {
     final String description = "Restaurant payment";
     CreateTransactionParams params = new CreateTransactionParams(reference, accountIban, date, amount, fee, description);
     Transaction transaction = new Transaction(reference, accountIban, date, amount, fee, description);
+    given(transactionCollection.findByReference(anyString())).willReturn(empty());
     given(transactionCollection.addTransaction(any(Transaction.class))).willReturn(transaction);
 
     // when
@@ -137,5 +142,29 @@ public class CreateTransactionTest {
     assertTrue(response.isRight());
     Transaction transactionResponse = response.get();
     assertFalse(isEmpty(transactionResponse.getReference()));
+  }
+
+  @Test
+  public void given_Al_Ready_Exist_Transaction_Without_Reference_When_The_Create_Transaction_Use_Case_Is_Executed_Then_The_Created_Transaction_With_Reference_Should_Be_Returned() {
+    // given
+    List<String> errors = singletonList("Al ready exist a transaction with same reference");
+    long date = System.currentTimeMillis();
+    String reference = "11111A";
+    String accountIban = "ES9820385778983000760236";
+    final double amount = 1678.87;
+    final double fee = 3.18;
+    final String description = "Restaurant payment";
+    CreateTransactionParams params = new CreateTransactionParams(reference, accountIban, date, amount, fee, description);
+    Transaction transaction = new Transaction(reference, accountIban, date, amount, fee, description);
+    given(transactionCollection.findByReference(anyString())).willReturn(of(transaction));
+
+    // when
+    Either<Error, Transaction> response = createTransaction.execute(params);
+
+    // then
+    assertTrue(response.isLeft());
+    Error errorValidation = response.getLeft();
+    assertEquals(409, errorValidation.getStatusCode());
+    assertEquals(errors, errorValidation.getErrors());
   }
 }
