@@ -3,6 +3,7 @@ package com.ismaelmasegosa.transaction.challenge.domain.transaction.status;
 import static com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Status.INVALID;
 
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
+import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.rules.AtmChannelAndDateGreaterToday;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.rules.ClientChannelAndDateGreaterToday;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.rules.ClientOrAtmChannelAndDateBeforeToday;
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.status.rules.ClientOrAtmChannelAndDateEqualsToday;
@@ -21,6 +22,7 @@ public class TransactionsStatusProvider {
     criterias.add(new ClientOrAtmChannelAndDateEqualsToday(transaction, channel));
     criterias.add(new InternalChannelAndDateEqualToday(transaction, channel));
     criterias.add(new ClientChannelAndDateGreaterToday(transaction, channel));
+    criterias.add(new AtmChannelAndDateGreaterToday(transaction, channel));
     return criterias.stream().filter(StatusRules::condition).map(StatusRules::action).findFirst()
         .orElseGet(() -> createInvalidTransactionStatus(transaction));
   }

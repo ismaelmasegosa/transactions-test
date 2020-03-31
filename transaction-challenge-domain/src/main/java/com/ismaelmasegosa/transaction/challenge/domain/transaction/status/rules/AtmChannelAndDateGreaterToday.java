@@ -1,7 +1,7 @@
 package com.ismaelmasegosa.transaction.challenge.domain.transaction.status.rules;
 
-import static com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Channel.CLIENT;
-import static com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Status.FUTURE;
+import static com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Channel.ATM;
+import static com.ismaelmasegosa.transaction.challenge.domain.transaction.status.Status.PENDING;
 import static java.time.Instant.ofEpochMilli;
 
 import com.ismaelmasegosa.transaction.challenge.domain.transaction.Transaction;
@@ -10,11 +10,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-public class ClientChannelAndDateGreaterToday implements StatusRules {
+public class AtmChannelAndDateGreaterToday implements StatusRules {
 
   private Transaction transaction;
 
-  public ClientChannelAndDateGreaterToday(Transaction transaction, String channel) {
+  public AtmChannelAndDateGreaterToday(Transaction transaction, String channel) {
     this.transaction = transaction;
     this.channel = channel;
   }
@@ -23,17 +23,17 @@ public class ClientChannelAndDateGreaterToday implements StatusRules {
 
   @Override
   public boolean condition() {
-    return isGreaterToday(transaction.getDate()) && isClient();
+    return isGreaterToday(transaction.getDate()) && isAtm();
   }
 
   @Override
   public TransactionStatus action() {
     double amount = transaction.getAmount() - transaction.getFee();
-    return new TransactionStatus(transaction.getReference(), FUTURE.name(), amount, 0.0);
+    return new TransactionStatus(transaction.getReference(), PENDING.name(), amount, 0.0);
   }
 
-  private boolean isClient() {
-    return channel.equalsIgnoreCase(CLIENT.name());
+  private boolean isAtm() {
+    return channel.equalsIgnoreCase(ATM.name());
   }
 
   private boolean isGreaterToday(long transactionDate) {
