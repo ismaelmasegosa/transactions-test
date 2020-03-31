@@ -45,3 +45,9 @@ Feature: Get transaction status
     Given valid reference 11111A and channel CLIENT are provided
     When I check the status from CLIENT channel the transaction date is greater today
     Then  The system returns the status FUTURE and the amount substracting the fee
+
+  @CreateTransactionGreaterToday @RemoveTransactionsGreaterToday
+  Scenario: Check status of transfer from ATM channel
+    Given valid reference 11111A and channel ATM are provided
+    When I check the status from CLIENT channel the transaction date is greater today
+    Then  The system returns the status PENDING and the amount substracting the fee
