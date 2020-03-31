@@ -58,6 +58,21 @@ public class Hooks {
     transactionRepository.delete("11111A");
   }
 
+  @Before("@CreateTransactionGreaterToday")
+  public void createTransactionGreaterToday() {
+    transactionRepository
+        .save(createTransactionEntity("11111A", "ES9820385778983000760236", getLocalDatePlusDays(4), 120.98, 2.00, "Restaurant Payment"));
+  }
+
+  @After("@RemoveTransactionsGreaterToday")
+  public void deleteTransactionsGreaterToday() {
+    transactionRepository.delete("11111A");
+  }
+
+  private long getLocalDatePlusDays(long days) {
+    return now().plusDays(days).toInstant(ZoneOffset.UTC).toEpochMilli();
+  }
+
   private long getLocalDateMinusDays(long days) {
     return now().minusDays(days).toInstant(ZoneOffset.UTC).toEpochMilli();
   }

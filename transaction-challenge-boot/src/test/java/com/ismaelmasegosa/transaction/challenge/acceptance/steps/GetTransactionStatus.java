@@ -68,6 +68,13 @@ public class GetTransactionStatus {
     world.setResultActions(resultActions);
   }
 
+  @When("I check the status from CLIENT channel the transaction date is greater today")
+  public void iCheckTheStatusFromCLIENTChannelTheTransactionDateIsGreaterToday() throws Exception {
+    ResultActions resultActions = mockMvc.perform(get("/transaction/" + world.getReference()).queryParam("channel", world.getChannel()));
+
+    world.setResultActions(resultActions);
+  }
+
   @Then("The system returns the status {word} and the amount substracting the fee")
   public void theSystemReturnsTheStatusAndTheAmountSubstractingTheFee(String word) throws Exception {
     ResultActions resultActions = world.getResultActions();
