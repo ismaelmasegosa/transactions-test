@@ -57,3 +57,9 @@ Feature: Get transaction status
     Given valid reference 11111A and channel INTERNAL are provided
     When I check the status from CLIENT channel the transaction date is greater today
     Then  The system returns the status FUTURE and the amount and the fee
+
+  @CreateTransactionGreaterToday @RemoveTransactionsGreaterToday
+  Scenario: Check status of transfer from INVALID channel
+    Given valid reference 11111A and channel INVALID are provided
+    When I check the status from CLIENT channel the transaction date is greater today
+    Then  The system returns a validation error
