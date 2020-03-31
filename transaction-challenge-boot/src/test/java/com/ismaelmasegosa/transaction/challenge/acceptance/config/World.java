@@ -1,5 +1,6 @@
 package com.ismaelmasegosa.transaction.challenge.acceptance.config;
 
+import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.entities.TransactionEntity;
 import java.time.LocalDateTime;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -21,6 +22,10 @@ public class World {
 
   private String sort;
 
+  private String channel;
+
+  private TransactionEntity transactionEntity;
+
   public void reset() {
     this.reference = "";
     this.accountIban = "";
@@ -30,6 +35,8 @@ public class World {
     this.description = "";
     this.resultActions = null;
     this.sort = "";
+    this.channel = "";
+    this.transactionEntity = null;
   }
 
   public String getReference() {
@@ -94,5 +101,21 @@ public class World {
 
   public void setSort(String sort) {
     this.sort = sort;
+  }
+
+  public String getChannel() {
+    return channel;
+  }
+
+  public void setChannel(String channel) {
+    this.channel = channel;
+  }
+
+  public TransactionEntity getTransactionEntity() {
+    return transactionEntity;
+  }
+
+  public void setTransactionEntity(TransactionEntity transactionEntity) {
+    this.transactionEntity = transactionEntity;
   }
 }

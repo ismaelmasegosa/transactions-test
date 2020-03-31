@@ -13,6 +13,7 @@ import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.trans
 import com.ismaelmasegosa.transaction.challenge.infrastructure.persistence.transaction.filters.TransactionsOrderByAmount;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
@@ -31,6 +32,11 @@ public class InMemoryTransactionCollection implements TransactionCollection {
     this.transactionRepository = transactionRepository;
     this.entityToDomain = entityToDomain;
     this.domainToEntity = domainToEntity;
+  }
+
+  @Override
+  public Optional<Transaction> findByReference(String reference) {
+    return transactionRepository.findByReference(reference).map(entityToDomain);
   }
 
   @Override
