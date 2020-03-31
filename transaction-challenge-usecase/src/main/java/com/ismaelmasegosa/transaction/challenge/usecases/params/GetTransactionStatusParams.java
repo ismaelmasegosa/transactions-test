@@ -1,6 +1,10 @@
 package com.ismaelmasegosa.transaction.challenge.usecases.params;
 
+import static com.ismaelmasegosa.transaction.challenge.usecases.params.GetTransactionStatusParamsValidation.fullParametersValidations;
+
+import com.ismaelmasegosa.transaction.challenge.domain.core.Validation;
 import com.ismaelmasegosa.transaction.challenge.usecases.core.UseCaseParams;
+import com.ismaelmasegosa.transaction.challenge.usecases.core.validation.ValidationResult;
 import java.util.Objects;
 
 public class GetTransactionStatusParams implements UseCaseParams {
@@ -28,6 +32,14 @@ public class GetTransactionStatusParams implements UseCaseParams {
 
   public void setChannel(String channel) {
     this.channel = channel;
+  }
+
+  @Override
+  public Validation validate() {
+    final Validation validation = new Validation();
+    final ValidationResult result = fullParametersValidations().apply(this);
+    result.getReasons().ifPresent(validation::addErrors);
+    return validation;
   }
 
   @Override
