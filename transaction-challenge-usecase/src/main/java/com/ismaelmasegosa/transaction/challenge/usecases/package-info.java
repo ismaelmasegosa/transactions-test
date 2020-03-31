@@ -1,1 +1,0 @@
-package com.ismaelmasegosa.transaction.challenge.usecases;
